@@ -1,0 +1,130 @@
+[flex~="main:justify-a"] {
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-around;
+}
+#app .screen-wrapper {
+  user-select: none;
+  width: 3840px;
+  height: 1080px;
+  background: #02061a;
+}
+#app .screen-wrapper .main {
+  position: relative;
+  height: calc(100% - 96px);
+  padding: 20px 40px;
+}
+#app .screen-wrapper .main .block-new .block-inner {
+  width: 450px;
+}
+#app .screen-wrapper .main .block-new .block-inner:nth-child(3) {
+  width: 900px;
+}
+#app .screen-wrapper .main .block-new .block-inner:nth-child(3) .bin-table th {
+  background-color: #0f1432;
+}
+#app .screen-wrapper .main .block-new .block-inner:nth-child(3) .bin-table th .bin-table-cell {
+  background-color: #0f1432;
+}
+#app .screen-wrapper .main .block-new .block-inner:nth-child(3) .bin-table .bin-table-row td:nth-child(1) {
+  background-color: #0f1432;
+}
+#app .screen-wrapper .main .block-new .block-inner:nth-child(3) .bin-table td {
+  padding: 0;
+  height: 60px;
+  line-height: 60px;
+  background-color: #192648;
+}
+#app .screen-wrapper .main .block-new .block-inner:nth-child(1) .bin-table td {
+  background-color: #192648;
+}
+#app .screen-wrapper .main .block-new .block-inner .top {
+  height: 445px;
+}
+#app .screen-wrapper .main .block-new .block-inner .top .bin-table-wrapper {
+  border-top: none;
+}
+#app .screen-wrapper .main .block-new .block-inner .top .block-title {
+  position: relative;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  background: url("../images/title-bg.png") center bottom no-repeat;
+  -webkit-background-size: 100% 50%;
+  background-size: 100% 50%;
+  width: 100%;
+  line-height: 60px;
+  height: 60px;
+}
+#app .screen-wrapper .main .block-new .block-inner .top .block-title .select-tip {
+  position: absolute;
+  right: 0;
+  top: 10px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  background-color: #0d1335;
+  color: #2967b8;
+  height: 40px;
+  padding: 0 20px;
+  line-height: 40px;
+  cursor: pointer;
+  font-size: 18px;
+}
+#app .screen-wrapper .main .block-new .block-inner .top .num-bar {
+  width: calc(100% - 2px);
+  border: 1px solid #181e3c;
+  padding: 5px;
+  font-size: 18px;
+  padding-left: 50px;
+  color: #00aeff;
+  background-color: #0f1432;
+}
+#app .screen-wrapper .main .block-new .block-inner .top .num-bar .number > span {
+  display: inline-block;
+  color: #00aeff;
+  font-weight: 700;
+  background-color: #232e4c;
+  margin: 0 2px;
+  padding: 0 8px;
+  font-size: 28px;
+}
+#app .screen-wrapper .main .block-new .block-inner .bot {
+  width: 900px;
+  height: 420px;
+}
+#app .screen-wrapper .main .block-new .block-inner .bot #ringChart {
+  width: 700px;
+  height: 420px;
+}
+#app .screen-wrapper .main .block-new .block-inner .map-title {
+  color: #2e4377;
+  background-color: #0a1631;
+  width: 220px;
+  margin: 0 auto;
+  height: 40px;
+  font-size: 20px;
+  text-align: center;
+  line-height: 40px;
+}
+#app .screen-wrapper .main .block-new .block-inner:nth-child(2) .over-hidden {
+  height: 770px;
+  overflow: hidden;
+}
+.dipan {
+  background: url("../images/foot.png") center bottom no-repeat;
+  -webkit-background-size: 100% 40px;
+  background-size: 100% 80px;
+}
+#app .screen-wrapper .main .block1-2 .table3 .block-title {
+  font-size: 20px;
+  position: relative;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  padding: 15px;
+  background: url("../images/title-bg.png") center bottom no-repeat;
+  -webkit-background-size: 100% 50%;
+  background-size: 100% 50%;
+}

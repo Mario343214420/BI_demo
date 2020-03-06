@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>信用奖惩分析</title>
+  <!--required-->
+  <!--核心库、动画库、请求库-->
+  <script src="../js/lib/vue.min.js"></script>
+  <script src="../js/lib/utils/axios.min.js"></script>
+  <!--required end-->
+  <!--第三方库和自己编写的插件-->
+  <!--bin-ui-->
+  <link rel="stylesheet" href="../js/lib/bin-ui/styles/index.css">
+  <script src="../js/lib/bin-ui/bin-ui.umd.min.js"></script>
+  <!--charts-->
+  <script src="../js/lib/echarts/echarts.min.js"></script>
+  <!--self-->
+  <link rel="stylesheet" href="../styles/index5.css">
+</head>
+<body>
+<div id="app" v-cloak>
+  <!--<b-scrollbar style="height:100%;">-->
+  <div class="screen-wrapper">
+    <v-header label="荣成市社会信用综合分析平台">
+
+      <a href="index.html">全市信用综合分析平台</a>
+      <a href="index2.html">个人信用分析</a>
+      <a href="index3.html">市场主体信用分析</a>
+      <a href="index4.html">镇街信用分析</a>
+      <a href="index5.html" class="active">信用奖惩分析</a>
+    </v-header>
+    <div class="main">
+      <v-block label="信用奖惩基本情况" :rect="[40,20,1870,944]">
+        <div class="block1" flex="main:justify-a">
+          <div class="left">
+
+            <div flex="main:justify" style="height:850px;margin-bottom: 10px;">
+              <div class="block1-1 dipan">
+                <div>
+                  <p class="block-title">
+                    <span>联合奖惩基本情况</span>
+                  </p>
+                  <div id="barChartFir" style="width: 850px;height: 350px"></div>
+                </div>
+
+                <div>
+                  <p class="block-title">
+                    <span>红名单及数量趋势分析</span>
+                  </p>
+                  <div id="lineChartFir" style="width: 850px;height: 350px"></div>
+                </div>
+                <!--环图-->
+                <!--
+                <div class="mb5">
+                  <div class="item w33 blue2">
+                    <img style="float: left" src="../images/icon1.png" alt="icon1"/>
+                    <p class="index30px">备忘录总数</p>
+                    <p class="font20">38条</p>
+                  </div>
+                  <div class="item w33" style="background-color: #0b0f29;">
+                    <p>激励</p>
+                    <p class="font20 blue2">12条</p>
+                  </div>
+                  <div class="item w33" style="background-color: #0b0f29;">
+                    <p>惩戒</p>
+                    <p class="font20 blue2">26条</p>
+                  </div>
+                </div>
+                <div class="chart padding-t40px" flex="box:mean">
+                  <div class="t-center">
+                    <b-circle stroke-width="12" trail-width="12" :percent="70" :size="240" stroke-color="#0F36AC"
+                              trail-color="#394760">
+                      <p>奖惩措施</p>
+                      <span class="font24">318</span>条
+                    </b-circle>
+                    <p flex="box:mean">
+                      <span><i style="background-color: #0f36ac;"></i>激励:216</span>
+                      <span><i></i>惩戒:102</span>
+                    </p>
+                  </div>
+                  <div class="t-center">
+                    <b-circle stroke-width="12" trail-width="12" :percent="55" :size="240" stroke-color="#FFC426"
+                              trail-color="#394760">
+                      <p>奖惩措施</p>
+                      <span class="font24">238</span>条
+                    </b-circle>
+                    <p flex="box:mean">
+                      <span><i style="background-color: #ffc426;"></i>激励:216</span>
+                      <span><i></i>惩戒:102</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="chart" flex="box:mean">
+                  <div class="t-center">
+                    <b-circle stroke-width="12" trail-width="12" :percent="37" :size="240" stroke-color="#E55278"
+                              trail-color="#394760">
+                      <p>奖惩措施</p>
+                      <span class="font24">338</span>条
+                    </b-circle>
+                    <p flex="box:mean">
+                      <span><i style="background-color: #e55278;"></i>激励:216</span>
+                      <span><i></i>惩戒:102</span>
+                    </p>
+                  </div>
+                  <div class="t-center">
+                    <b-circle stroke-width="12" trail-width="12" :percent="43" :size="240" stroke-color="#0B87ED"
+                              trail-color="#394760">
+                      <p>奖惩措施</p>
+                      <span class="font24">212</span>条
+                    </b-circle>
+                    <p flex="box:mean">
+                      <span><i style="background-color: #0b87ed;"></i>激励:216</span>
+                      <span><i></i>惩戒:102</span>
+                    </p>
+                  </div>
+                </div>
+                -->
+              </div>
+            </div>
+          </div>
+          <div class="right">
+            <div class="top" flex="main:justify-a">
+              <div class="top-left">
+                <p class="block-title">
+                  <span>红名单列表</span>
+                  <span v-show="!redModal" class="select-tip" @click="redModal=true">更多  ></span>
+                </p>
+                <div class="block3-5">
+                  <div>
+                    <b-table :columns="[
+                { title: '名单名称', slot: 'name',width:350},
+                { title: '名单数量', key: 'num', align: 'center' },
+              ]" :data="redData.slice(0,7)" border disabled-hover>
+                      <template v-slot:name="scope">
+                        <span style="color:#e06189">{{scope.row.name}}</span>
+                      </template>
+                    </b-table>
+                  </div>
+                </div>
+              </div>
+              <div class="top-right">
+                <p class="block-title">
+                  <span>黑名单列表</span>
+                  <span v-show="!blackModal" class="select-tip" @click="blackModal=true">更多  ></span>
+                </p>
+                <div class="block3-6">
+                  <div>
+                    <b-table :columns="[
+                { title: '名单名称', slot: 'name',width:350},
+                { title: '名单数量', key: 'num', align: 'center' },
+              ]" :data="blackData.slice(0,7)" border disabled-hover>
+                      <template v-slot:name="scope">
+                        <span style="color:#0cf">{{scope.row.name}}</span>
+                      </template>
+                    </b-table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bot dipan">
+              <div class="tip">红黑名单交叉情况</div>
+              <div class="count">
+                <div class="nums" flex="main:justify-a">
+                  <div class="num" flex="dir:top">
+                    <span>红名单数量</span>
+                    <span> {{hhmdjxqk[0].hmdsl }}</span>
+                  </div>
+                  <div class="num" flex="dir:top">
+                    <span>交叉数量</span>
+                    <span>{{hhmdjxqk[0].jcsl }}</span>
+                  </div>
+                  <div class="num" flex="dir:top">
+                    <span>黑名单数量</span>
+                    <span>{{hhmdjxqk[0].hdsl }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <v-modal :rect="[940,80,445,840]"
+                 label="红名单列表"
+                 v-model="redModal"
+                 transition-name="fade-scale-move">
+          <b-table :columns="[
+                { title: '名单名称', slot: 'name',width:320},
+                { title: '名单数量', key: 'num', align: 'center' },
+              ]" :data="redData" border disabled-hover
+                   style="margin-right: 15px;">
+            <template v-slot:name="scope">
+              <span style="color:#e06189;">{{scope.row.name}}</span>
+            </template>
+          </b-table>
+        </v-modal>
+        <v-modal :rect="[1398,80,445,840]" label="黑名单列表"
+                 v-model="blackModal" transition-name="fade-scale-move">
+          <b-table :columns="[
+                { title: '名单名称', slot: 'name',width:320},
+                { title: '名单数量', key: 'num', align: 'center' },
+              ]" :data="blackData" border disabled-hover
+                   style="margin-right: 15px;">
+            <template v-slot:name="scope">
+              <span style="color:#0cf;">{{scope.row.name}}</span>
+            </template>
+          </b-table>
+        </v-modal>
+      </v-block>
+      <v-block label="信用奖惩应用分析" :rect="[1930,20,1870,944]">
+        <div class="block2">
+          <div class="top" flex="main:justify-a">
+            <div class="item dipan">
+              <p class="block-title">
+                <span>红名单查询次数统计</span>
+              </p>
+              <div id="redBarChart" style="width:400px; height:310px;"></div>
+            </div>
+            <div class="item dipan">
+              <p class="block-title">
+                <span>黑名单查询次数统计</span>
+              </p>
+              <div id="blackBarChart" style="width:400px; height:310px;"></div>
+            </div>
+            <div class="tables" flex>
+            <div class="block2-4 m0-10px">
+                <p class="block-title">
+                  <span>多部门激励案例 (企业)</span>
+                  <span v-show="!grJcModal" class="select-tip" @click="show('grJcModal')">更多  ></span>
+                </p>
+                <b-table :columns="jcGrColumns"
+                         :data="jcGrData.slice(0,7)" border disabled-hover>
+                  <template v-slot:name="scope">
+                <span class="blue2 pointer t-ellipsis"
+                      @click="showGrJcDetail(scope.row)"
+                      style="display:block;width: 100%;height:100%;">
+                  <b-icon name="doubleright"></b-icon>
+                  {{ scope.row.name }}
+                </span>
+                  </template>
+                </b-table>
+              </div>
+              <div class="block2-3 m0-10px">
+                <p class="block-title">
+                  <span>多部门惩戒案例 (企业)</span>
+                  <span v-show="!qyJcModal" class="select-tip" @click="show('qyJcModal')">更多  ></span>
+                </p>
+                <b-table :columns="jcQyColumns"
+                         :data="jcQyData.slice(0,7)" border disabled-hover>
+                  <template v-slot:name="scope">
+                <span class="blue2 pointer t-ellipsis"
+                      @click="showQyJcDetail(scope.row)"
+                      style="display:block;width: 100%;height:100%;">
+                  <b-icon name="doubleright"></b-icon>
+                  {{ scope.row.name }}
+                </span>
+                  </template>
+                </b-table>
+              </div>
+            </div>
+          </div>
+          <div class="bot" flex>
+            <div class="chart-container">
+              <div class="tip" flex>
+                <span>和使用情况</span>
+                <span>各部门措施数量</span>
+              </div>
+              <div id="barChart" style="height:400px;">
+              </div>
+            </div>
+            <div class="pt40px" flex>
+              <div style="width: 485px;margin-right: 10px;" class="item dipan">
+                <p class="block-title">
+                  <span>个人黑名单退出趋势</span>
+                </p>
+                <div id="redLineChart" style="width:480px; height:340px;"></div>
+              </div>
+              <div style="width: 485px;" class="item dipan">
+                <p class="block-title">
+                  <span>企业黑名单退出趋势</span>
+                </p>
+                <div id="blackLineChart" style="width:480px; height:340px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <v-modal :rect="[1355,75,490,832]" label="多部门惩戒案例 (企业)"
+                 v-model="qyJcModal" transition-name="fade-scale-move">
+          <b-table :columns="jcQyColumns" :data="jcQyData" border disabled-hover style="margin-right: 15px;">
+            <template v-slot:name="scope">
+            <span class="blue2 pointer t-ellipsis" @click="showQyJcDetail(scope.row)"
+                  style="display:block;width: 100%;height:100%;">
+              <b-icon name="doubleright"></b-icon>
+              {{ scope.row.name }}
+            </span>
+            </template>
+          </b-table>
+        </v-modal>
+        <!--企业的措施详情-->
+        <v-modal :rect="[855,75,495,455]" label="执行详情"
+                 v-model="qyJcContentModal" transition-name="fade-scale-move">
+          <h2 class="blue2 mb10">企业名称：{{currentRowName}}</h2>
+          <b-table :columns="[
+                { title: '措施内容', key: 'content'},
+                { title: '执行部门', key: 'dept', align: 'center' },
+              ]" :data="jcQyContentData" border disabled-hover
+                   style="margin-right: 15px;">
+          </b-table>
+        </v-modal>
+        <v-modal :rect="[855,75,490,832]" label="多部门激励案例 (企业)"
+                 v-model="grJcModal" transition-name="fade-scale-move">
+          <b-table :columns="jcGrColumns" :data="jcGrData" border disabled-hover style="margin-right: 15px;">
+            <template v-slot:name="scope">
+            <span class="blue2 pointer t-ellipsis" @click="showGrJcDetail(scope.row)"
+            	   style="display:block;width: 100%;height:100%;" >
+              <b-icon name="doubleright"></b-icon>
+              {{ scope.row.name }}
+            </span>
+            </template>
+          </b-table>
+        </v-modal>
+        <!--个人措施详情-->
+        <v-modal :rect="[1350,75,495,455]" label="执行详情"
+                 v-model="grJcContentModal" transition-name="fade-scale-move">
+          <h2 class="blue2 mb10">企业：{{currentRowName}}</h2>
+          <b-table :columns="[
+                { title: '措施内容', key: 'content'},
+                { title: '执行部门', key: 'dept', align: 'center' },
+              ]" :data="jcGrContentData" border disabled-hover
+                   style="margin-right: 15px;">
+          </b-table>
+        </v-modal>
+      </v-block>
+    </div>
+  </div>
+  <!--</b-scrollbar>-->
+</div>
+<script src="../js/components/v-header.js"></script>
+<script src="../js/components/v-block.js"></script>
+<script src="../js/components/v-full-block.js"></script>
+<script src="../js/components/v-chart-bar.js"></script>
+<script src="../js/components/v-modal.js"></script>
+<!--测试模拟请求-->
+  <script src="../../../bigData/script/data.js"></script>
+  <script type="text/javascript" src="../../../bigData/script/jquery/jquery-3.2.1.min.js"></script>
+<script src="../js/lib/utils/mock.js"></script>
+<script src="../mock/mockIndex5p.js"></script>
+<script>
+var lhjcbwl=getDataRc('RCData-lhjcbwl');//奖惩备忘录
+var jcxx=getDataRc('RCData-jcxx')//奖惩措施
+var renderDeptChart=getDataRc('RCData-renderDeptChart')//奖惩措施
+var renderBlackChart=getDataRc('RCData-renderBlackChart')//奖惩措施
+var renderfirLineChartData=getDataRc('RCData-redererfirLineChartData')//联合奖惩基本情况
+var renderfirBarChartData=getDataRc('RCData-renderfirBarChartData')//红名单及数量趋势分析
+var hhmdjxqk=getDataRc('RCData-hhmdjc')//红黑名单交叉情况
+  var vm = new Vue({
+    el: '#app',
+    data() {
+      return {
+        //红黑名单数据
+        redData: [],
+        blackData: [],
+        redBlackType: '红名单',
+        blackModal: false,
+        redModal: false,
+        redBarChartData: [1004, 600, 500, 700, 100, 200, 1400, 2000],
+        blackBarChartData: [],
+        redLineChartData: [],
+        blackLineChartData: [],
+        // 多部门案例
+        jcGrColumns: [
+          {title: '企业', slot: 'name'},
+          {title: '执行部门数', key: 'count', align: 'center'},
+          {title: '激励次数', key: 'total', align: 'center'}
+        ],
+        jcGrData: [],
+        jcQyColumns: [
+          {title: '企业', slot: 'name'},
+          {title: '执行部门数', key: 'count', align: 'center'},
+          {title: '惩戒次数', key: 'total', align: 'center'}
+        ],
+        jcQyData: [],
+        jcQyContentData:[],
+        jcGrContentData:[],
+        qyJcModal: false,
+        grJcModal: false,
+        qyJcContentModal:false,
+        grJcContentModal:false,
+        currentRowName: '',
+        firLineChartData: {
+           red: [12000, 13000, 14000, 15000, 16000, 17000],
+           black: [11000, 12000, 13000, 14000, 15000, 15555]
+        },
+        firBarChartData:{
+           sps:[40,100,40,100],
+           use:[20,40,20,50]
+        }
+      }
+    },
+    created() {
+      this.getRedData();
+      this.getBlackData();
+      this.getCjData();
+    },
+    mounted() {
+      this.getRBChartData();
+    },
+    computed: {},
+    watch: {
+      redBarChartData: (n, o) => {
+        vm.renderBarChart(id = 'redBarChart',  color = ['#E06189'],data = n,"deptName");
+      },
+      blackBarChartData: (n, o) => {
+        vm.renderBarChart(id = 'blackBarChart',  color = ['#3f5ee4'],data = n,"deptName1")
+      },
+      redLineChartData: (n, o) => {
+        vm.renderLineChart(id = 'redLineChart', data = n, color = ['#3f5ee4'],'黑名单')
+      },
+      blackLineChartData: (n, o) => {
+        vm.renderLineChart(id = 'blackLineChart', data = n, color = ['#3f5ee4'],'黑名单')
+      },
+      firLineChartData: (n, o) => {
+        vm.renderFirLineChart('lineChartFir', n)
+      },
+      firBarChartData: (n, o) => {
+        vm.renderFirBarChart('barChartFir', n)
+      }
+    },
+    methods: {
+      show (str) {
+        this.qyJcModal = false
+        this.grJcModal = false
+        this[str] = true
+      },
+      renderDeptChart (obj) {
+        var myChart = echarts.init(document.getElementById('barChart'))
+        // 指定图表的配置项和数据
+        var colors = ['#0f36ac', '#0b87ed']
+        var option = {
+          color:colors,
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            }
+          },
+          grid: {
+            right: '20%'
+          },
+          legend: {
+            right:150,
+            textStyle:{color:'#fff'},
+            data: ['措施总量', '应用数量']
+          },
+          xAxis: [
+            {
+              type: 'category',
+              axisTick: {
+                alignWithLabel: true
+              },
+              data: obj.list,
+              axisLabel: {
+                formatter: '{value}',
+                textStyle: {
+                  color: '#fff'
+                },
+                margin:40,
+                align:'center',
+                interval:0,
+                rotate:45,
+                verticalAlign:'bottom'
+              }
+            }
+          ],
+          yAxis: [
+            {
+              type: 'value',
+              min: 0,
+              position: 'left',
+              axisLine: {
+                lineStyle: {
+                  color: '#181e3c'
+                }
+              },
+              axisLabel: {
+                formatter: '{value}',
+                textStyle: {
+                  color: '#fff'
+                }
+              }
+            },
+            {
+              type: 'value',
+              min: 0,
+              position: 'right',
+              axisLine: {
+                lineStyle: {
+                  color: '#181e3c'
+                }
+              },
+              axisLabel: {
+            	show:false,
+                formatter: '{value}',
+                textStyle:{
+                  color:'#fff'
+                }
+              }
+            }
+
+          ],
+          series: [
+            {
+              name: '措施总量',
+              type: 'bar',
+              data: obj.total,
+              label: {
+                  show: true,
+                  position:'top',
+                  color: '#fff'
+                }
+            },
+            {
+              name: '应用数量',
+              type: 'bar',
+              yAxisIndex: 1,
+              data: obj.used,
+              label: {
+                  show: true,
+                  position:'top',
+                  color: '#fff'
+                }
+            },
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      // 部门查询统计
+      renderFirLineChart (id, data) {
+        var myChart = echarts.init(document.getElementById(id))
+        option = {
+          color: ['#ca0f5d', '#0b87ed'],
+          tooltip: {
+            trigger: 'axis'
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            top:'15%',
+            containLabel: true
+          },
+          legend: {
+            icon: 'rect',
+            data: ['红名单', '黑名单'],
+            bottom: 0,
+            top: '5%',
+            right: 0,
+            textStyle: {
+              color: '#fff'
+            }
+          },
+          xAxis: {
+            type: 'category',
+            data: ['2014年', '2015年', '2016年', '2017年', '2018年', '2019年'],
+            axisLine: {
+              lineStyle: {
+                color: '#fff'
+              }
+            },
+            boundaryGap: ['20%', '20%']
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: {
+              lineStyle: {
+                color: '#fff'
+              }
+            }
+          },
+          series: [
+            {
+              name: '红名单',
+              type: 'line',
+              label: {
+                  show: true,
+                  color: '#fff'
+                },
+              data: data.red
+            },
+            {
+              name: '黑名单',
+              type: 'line',
+              label: {
+                  show: true,
+                  color: '#fff'
+                },
+              data: data.black
+            }
+          ]
+        }
+        myChart.setOption(option)
+      },
+      renderFirBarChart (id, data) {
+        var myChart = echarts.init(document.getElementById(id))
+        option = {
+          color: ['#FFC426', '#0b87ed'],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          legend: {
+            data: ['国家发布总量','荣成应用总量'],
+            bottom: 0,
+            icon: 'rect',
+            top: '5%',
+            right: 0,
+            textStyle: {
+              color: '#fff'
+            }
+          },
+          grid: {
+            top:'15%',
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          yAxis: {
+            type: 'value',
+            boundaryGap: [0, 0.01],
+            axisLine: {
+              lineStyle: {
+                color: '#fff'
+              }
+            }
+          },
+          xAxis: {
+            type: 'category',
+            data: ['激励备忘录', '惩戒备忘录','激励措施','惩戒措施'],
+            axisLine: {
+              lineStyle: {
+                color: '#fff'
+              }
+            },
+            boundaryGap: ['20%', '20%']
+          },
+          series: [
+            {
+              name: '国家发布总量',
+              type: 'bar',
+              data: data.gj,
+              label: {
+                  show: true,
+                  position: 'top',
+                  color: '#fff'
+                },
+            },
+            {
+                name: '荣成应用总量',
+                type: 'bar',
+                data: data.rc,
+                label: {
+                    show: true,
+                    position: 'top',
+                    color: '#fff'
+                  },
+             }
+          ]
+        }
+
+        myChart.setOption(option)
+      },
+      renderBarChart (id,color, data,name) {
+        var myChart = echarts.init(document.getElementById(id))
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#0f36ac', '#0b87ed'],
+          tooltip: {
+            trigger: 'axis'
+          },
+          //tooltip: false,
+          grid: {
+            top: 20,
+            left: 100,
+            bottom: 20
+          },
+          xAxis: {
+            show: false
+          },
+          yAxis: {
+            inverse: true,
+            axisLine: {
+              show: false
+            },
+            splitLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              color: '#fff',
+              fontSize: 16,
+              formatter: function (value) {
+                return (value.length > 5 ? (value.slice(0, 5) + '...') : value)
+              }
+            },
+            data:  renderDeptChart[name]
+          },
+          series: [
+            {
+              name: '查询次数',
+              type: 'bar',
+              data: data,
+              barWidth: 10,
+              itemStyle: {
+            	color:color,
+                barBorderRadius: 10
+              },
+              label: {
+                show: true,
+                position: 'right',
+                color: '#fff'
+              }
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      renderLineChart(id, data, color,seriesLabelName) {
+        var myChart = echarts.init(document.getElementById(id));
+        var option = {
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            icon: 'rect',
+            bottom: 10,
+            textStyle: {
+              color: '#7893ad'
+            },
+            data: ['数据量', '平均分']
+          },
+          color: color,
+          grid: {
+            left: 50,
+            top: 40,
+            right: 0,
+            width: 400,
+            bottom: 60
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#141e3e'}
+            },
+            type: 'category',
+            data: renderBlackChart['month']
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#141e3e'}
+            },
+            max:function(value){
+            	return value.max+parseInt(value.max/2);
+            }
+          },
+          series: [
+            {
+              label: {show: 'true', position: 'top', color: '#fff'},
+              name: seriesLabelName,
+              type: 'line',
+              data: data
+            },
+          ]
+        };
+        myChart.setOption(option)
+      },
+      showRedBlackModal() {
+        this.redBlackModal = true
+      },
+      showRedModal() {
+        this.redModal = true
+      },
+      showBlackModal() {
+        this.blackModal = true
+      },
+      //分别获取黑名单，红名单
+      getRedData () {
+        var _self = this
+        var url = '/redList'
+        axios.get(url).then(function (res) {
+          _self.redData = res.data.list
+        })
+      },
+      getBlackData () {
+        var _self = this
+        var url = '/blackList'
+        axios.get(url).then(function (res) {
+          _self.blackData = res.data.list
+        })
+      },
+      getRBChartData () {
+        var _self = this
+        var url = '/rbChartData'
+        axios.get(url).then(function (res) {
+    	  _self.redBarChartData = renderDeptChart['cxcs'];
+          _self.blackBarChartData = renderDeptChart['zxcs'];
+          _self.redLineChartData = renderBlackChart['fo'];
+          _self.blackLineChartData = renderBlackChart['zrp'];
+          _self.firLineChartData = renderfirLineChartData
+          _self.firBarChartData = renderfirBarChartData
+        })
+      },
+
+      getCjData() {
+        _self = this;
+        axios.get('/grJcData').then(function (res) {
+          _self.jcGrData = res.data.list;
+        });
+        axios.get('/qyJcData').then(function (res) {
+          _self.jcQyData = res.data.list;
+        });
+        axios.get('/jcChartData').then(function (res) {
+          _self.jcChartData = res.data;
+          vm.renderDeptChart(res.data)
+        })
+      },
+      showQyJcDetail(row) {
+        var _self = this;
+        this.currentRowName = row.name;
+        axios.get('/qyJcDetail', row.name).then(function (res) {
+          _self.jcQyContentData = res.data.list[row._index]
+          _self.qyJcContentModal=true
+          console.log(res.data);
+        })
+      },
+      showGrJcDetail(row) {
+        var _self = this;
+        this.currentRowName = row.name;
+        axios.get('/grJcDetail', row.name).then(function (res) {
+          _self.jcGrContentData = res.data.list[row._index]
+          _self.grJcContentModal = true;
+          console.log(res.data);
+        })
+      }
+      // showQyJcContentModal() {
+      //   var _self = this;
+      //   axios.get('/qyJcDetail', row.name).then(function (res) {
+      //     // _self.jcQyContentData = res.data.list;
+      //     // _self.showQyJcContentModal()
+      //   })
+      // },
+      // showGrJcContentModal() {
+      //   var _self = this;
+      //   axios.get('/grJcDetail', row.name).then(function (res) {
+      //     // _self.jcGrContentData = res.data.list;
+      //     // _self.showQyJcContentModal();
+      //   })
+      // },
+    }
+  })
+</script>
+</body>
+</html>

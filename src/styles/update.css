@@ -1,0 +1,25 @@
+#app .screen-wrapper .main .more-add {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  padding: 4px 15px;
+  background: #0d1335;
+  color: #2a7ad1;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 30px;
+}
+.top2 {
+  margin-bottom: 10px;
+}
+.top2 .item {
+  width: 48%;
+  padding: 10px 20px;
+  margin: 0 5px;
+  background-color: #192648;
+  border-radius: 38px;
+  text-align: center;
+}
+.position-r {
+  position: relative;
+}

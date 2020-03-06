@@ -1,0 +1,284 @@
+@import "./common/base.styl"
+@import "./common/bin-ui.styl"
+
+$blue = #00AEFF //主题蓝色
+$black = #02061a
+$bd = #181e3c //边框色
+$bgHighLight = #0e35ab
+$bgBtn = #0d1335
+$cBtn = #2a68bb
+[flex~="main:justify-a"]
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-around
+.dipan
+  background: url(../images/foot.png) center bottom no-repeat;
+  -webkit-background-size: 100% 40px
+  background-size: 100% 80px
+.index30px
+  text-indent 30px
+#app
+  .screen-wrapper
+    user-select: none;
+    width: 3840px;
+    height: 1080px;
+    background: $black
+
+    .main
+      position: relative;
+      height: calc(100% - 96px);
+      padding: 20px 40px;
+
+      .block1
+        //统一梯形title
+
+        .block-title
+          position: relative;
+          font-size: 20px;
+          font-weight: bold;
+          text-align: center;
+          color: #fff;
+          padding: 15px;
+          background: url(../images/title-bg.png) center bottom no-repeat;
+          -webkit-background-size: 100% 50%
+          background-size: 100% 50%
+
+          .title-tip
+            position absolute
+            left 0
+            color $blue
+            font-size: 24px
+          .select-tip
+            position absolute
+            right 0
+            font-weight: 400
+            -webkit-border-radius: 20px
+            -moz-border-radius: 20px
+            border-radius: 20px
+            display inline-block
+            height 40px
+            background-color: $bgBtn
+            padding 0 20px
+            line-height: 40px
+            font-size: 16px
+            text-align center
+            cursor pointer
+            top 0
+            color $cBtn
+        .left
+          width 900px
+          .block1-1
+            width: 100%
+            .border
+              height: 733px
+              border: 1px solid #182547;
+              padding 10px 10px 20px;
+              background-color: rgba(7, 10, 32, 0.62);
+
+            span
+              display: inline-block;
+
+            .number span
+              color: #00adfe;
+              font-size: 32px;
+              line-height: 36px;
+              display: inline-block;
+              padding: 2px 6px;
+              margin-right: 2px;
+              background-color #232e4c;
+
+            .num
+              padding: 10px 0 0 5px;
+              font-size: 16px;
+
+            .item
+              display: inline-block;
+              text-align: center;
+              vertical-align: top;
+              padding: 0 10px;
+              height: 80px;
+              padding-top: 15px;
+              background-color: #0f1432;
+              &:first-child
+                padding-top: 15px;
+                line-height: 1.2em;
+
+              img
+                width: 25px;
+
+              &.icon
+                position: relative;
+                height: 80px;
+                text-align: left;
+                padding-left: 80px;
+                &:before
+                  content: ''
+                  position: absolute;
+                  left: 20px;
+                  top: 20px;
+                  width: 40px;
+                  height: 40px;
+                  background-color #303b5a;
+                  border-radius: 50%;
+
+              p
+                line-height: 1.5em;
+
+            .chart
+              padding-top: 6px;
+              p
+                font-size: 16px;
+                line-height: 1.5em;
+                color: #eee;
+                span > i
+                  display: inline-block;
+                  width: 14px;
+                  height: 14px;
+                  background-color: #394760;
+                  margin: 0 4px;
+
+
+              > div
+                padding-right: 10px;
+
+
+            .padding-t40px
+              padding-top 40px
+        .right
+          width: 900px
+          .bin-table
+            th,td
+              background-color: #0e132e;
+          .top
+            .top-left
+              width: 430px
+            .top-right
+              width: 430px
+          .bot
+            width: 100%
+            height: 403px
+            position relative
+            .count
+              width: 100%
+              height: 370px
+              background: url("../images/red-black.png") no-repeat
+              background-position: center bottom
+              position relative
+              .nums
+                width 400px
+                position absolute
+                left: 50%
+                top: 50%
+                transform translate(-50%,-50%)
+                padding-top: 60px
+                .num
+                  text-align center
+                  span
+                    color #fff
+                    &:nth-child(1)
+                      font-size: 18px
+                      font-weight: 700
+                      line-height: 40px
+
+            .tip
+              width: 80px
+              position absolute
+              left 50px
+              top 40px
+              font-size:20px
+              font-weight: 700
+              color $blue
+              padding 30px
+
+              background-color: #121943
+              border-top: 12px solid #161f57
+
+      .block2
+        .top
+          height: 380px
+          margin-bottom:20px
+          .item
+            .block-title
+              position: relative;
+              font-size: 20px;
+              font-weight: bold;
+              text-align: center;
+              color: #fff;
+              padding: 5px;
+        .bot
+          .block-title
+            position: relative;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            padding: 15px;
+            background: url(../images/title-bg.png) center bottom no-repeat;
+            -webkit-background-size: 100% 50%
+            background-size: 100% 50%
+
+            .title-tip
+              position absolute
+              left 0
+              color $blue
+              font-size: 24px
+            .select-tip
+              position absolute
+              right 0
+              font-weight: 400
+              -webkit-border-radius: 20px
+              -moz-border-radius: 20px
+              border-radius: 20px
+              display inline-block
+              height 40px
+              background-color: $bgBtn
+              padding 0 20px
+              line-height: 40px
+              font-size: 16px
+              text-align center
+              cursor pointer
+              top 0
+              color $cBtn
+          height: 420px
+          .item
+            width: 500px
+            .block-title
+              position: relative;
+              font-size: 20px;
+              font-weight: bold;
+              text-align: center;
+              color: #fff;
+              padding: 15px;
+              background: url(../images/title-bg.png) center bottom no-repeat;
+              -webkit-background-size: 100% 50%
+              background-size: 100% 50%
+          .chart-container
+            width: 834px
+            padding-left: 150px
+            padding-top: 40px
+            position relative
+            height 450px
+            background-color: #0e132e
+            .tip
+              width: 80px
+              position absolute
+              left 50px
+              top 80px
+              font-size:20px
+              font-weight: 700
+              color $blue
+              padding 40px 15px
+              background-color: #121943
+              border-top: 12px solid #161f57
+              span
+                display block
+                width: 40px
+            #barChart
+              width: 700px
+          .tables
+            width: 1000px
+            .m0-10px
+              margin 0 10px
+#app .bin-scrollbar__wrap {
+  overflow-x: hidden;
+}

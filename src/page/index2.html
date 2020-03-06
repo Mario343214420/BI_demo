@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>重点人群重点行业分析</title>
+  <!--required-->
+  <script src="../../../bigData/script/data.js"></script>
+  <script type="text/javascript" src="../../../bigData/script/jquery/jquery-3.2.1.min.js"></script>
+
+  <!--核心库、动画库、请求库-->
+  <script src="../js/lib/vue.min.js"></script>
+  <script src="../js/lib/utils/axios.min.js"></script>
+  <!--required end-->
+  <!--第三方库和自己编写的插件-->
+  <!--bin-ui-->
+  <link rel="stylesheet" href="../js/lib/bin-ui/styles/index.css">
+  <script src="../js/lib/bin-ui/bin-ui.umd.min.js"></script>
+  <!--charts-->
+  <script src="../js/lib/echarts/echarts.min.js"></script>
+  <!--self-->
+  <link rel="stylesheet" href="../styles/index2.css">
+    <style>
+    .flex_spaceBetween{
+      display:flex;
+      justify-content:space-between;
+    }
+
+  </style>
+</head>
+<body>
+<!DOCTYPE html>
+<div id="app" v-cloak>
+  <!--<b-scrollbar style="height:100%;">-->
+  <div class="screen-wrapper">
+    <v-header label="荣成市社会信用综合分析平台">
+      <a href="index.html">全市信用综合分析平台</a>
+      <a href="index2.html" class="active">重点人群重点行业分析</a>
+      <a href="index3.html">专项应用分析</a>
+    </v-header>
+    <div class="main">
+      <v-block label="重点人群分析" :rect="[40,20,1870,940]">
+        <div class="block1-1">
+          <v-full-block :rect="[25,60,885,500]">
+            <div class="table1">
+              <h2>重点人群数量</h2>
+              <div class="per-count bgc0f1432" flex="box:mean">
+                <span class="pc-item f" v-for="(item,i) in importPerCount">
+                  <span class="inner">
+                    <img class="inner-img" :src="'../images/cir'+(i+1)+'.png'">
+                  </span>
+                  <span class="inner">
+                    <i class="pci-num blue2 font22 fontw700">{{item.count}}</i>
+                    <i class="pci-title">{{item.title}}</i>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </v-full-block>
+          <v-full-block :rect="[955,60,885,500]">
+            <div class="table1 t-style1">
+              <h2>各年龄段党员的信用等级</h2>
+              <div class="cp-btn" @click="showIptPerModal4">{{isPer4?'数据':'占比'}}</div>
+              <b-table :columns="dyCreditLv" :data="dyCreditLvVal" border disabled-hover>
+              </b-table>
+            </div>
+          </v-full-block>
+          <v-full-block :rect="[25,190,885,350]">
+            <div class="table1 t-style1">
+              <!--弹窗按钮-->
+              
+              <div class="cp-btn" @click="showIptPerModal1">{{isPer1?'数据':'占比'}}</div>
+              <h2>重点人群信用等级分布</h2>
+              <b-table :columns="iptCreditLv"
+                       :data="iptCreditLvVal" border disabled-hover>
+              </b-table>
+            </div>
+          </v-full-block>
+          <!--弹窗-->
+          <v-modal style="z-index: 20" :rect="[25,70,885,480]" label="重点人群信用等级占比统计" v-model="showIptStatModal1">
+            <div class="chart-container" style="padding-left: 0;width: 740px">
+              <div class="innerTips">
+
+              </div>
+              <div class="chart-inline" id="barChart4">
+              </div>
+              <div class="chart-inline">
+                <ul class="chart-tip" style="width: 170px;line-height: 52px;">
+                  <li class="ci-item">机关事业单位人员</li>
+                  <li class="ci-item">党员</li>
+                  <li class="ci-item">教师</li>
+                  <li class="ci-item">医护人员</li>
+                </ul>
+              </div>
+              <div class="chart-inline" id="barChart5">
+              </div>
+            </div>
+          </v-modal>
+
+          <v-full-block :rect="[25,550,885,350]">
+            <div class="table1">
+              <h2 class="bg-title-none">
+                <span class="chart-t">重点人群信用指数变化趋势</span>
+                <span class="chart-t">机关事业单位人员BCD等级变化趋势</span>
+              </h2>
+              <div class="chart-inline pr10px" id="lineChart1" style="width: 440px;height: 350px;">
+              </div>
+              <div class="chart-inline pr10px" id="barChart1" style="width: 440px;height:350px;">
+              </div>
+            </div>
+          </v-full-block>
+          <v-full-block :rect="[955,500,885,350]">
+            <div class="table1 bg-foot">
+              <div class="chart-container">
+               <div class="t-tip-toggle" @click="toggleDyFlag">{{dyFlag?'占比':'人数'}}</div>
+                <div class="t-tip3">农村党员社区党员对比</div>
+                <div class="t-tip4" flex="main:justify">
+                  <span class="tt-inner">农村党员</span>
+                  <span class="tt-inner">社区党员</span>
+                </div>
+                <div class="chart-inline" id="barChart2">
+                </div>
+                <div class="chart-inline">
+                  <ul class="chart-tip">
+                    <li class="ci-item">AAA</li>
+                    <li class="ci-item">AA</li>
+                    <li class="ci-item">A+</li>
+                    <li class="ci-item">A</li>
+                    <li class="ci-item">A-</li>
+                    <li class="ci-item">B</li>
+                    <li class="ci-item">C</li>
+                    <li class="ci-item">D</li>
+                  </ul>
+                </div>
+                <div class="chart-inline" id="barChart3">
+                </div>
+              </div>
+            </div>
+          </v-full-block>
+        </div>
+      </v-block>
+      <v-block label="重点行业分析" :rect="[1930,20,1870,940]">
+        <div class="block1-2">
+          <v-full-block :rect="[25,60,885,440]">
+            <div class="table3 t-style2">
+              <h2 class="bg-title-none">十大重点行业基本情况</h2>
+              <b-table size="small"
+                       class="s-table"
+                       highlight-row
+                       @on-current-change="handleRBChart3"
+                       :columns="impBase"
+                       :data="impBaseVal"
+                       border>
+              </b-table>
+              <div class="chart-title">{{chartTitle2!==''?chartTitle2+"变化趋势":impBaseVal[0].trade+"变化趋势"}}</div>
+              <div class="chart-inline pr10px" id="lineChart3">
+              </div>
+            </div>
+          </v-full-block>
+         <v-full-block :rect="[960,60,885,400]">
+            <div class="table1 bg-foot special1">
+              <h2>十大重点行业中企业平均被处罚次数</h2>
+              <div class="flex_spaceBetween">
+
+                <div style="width: 48%;">
+                  <b-table :columns="publish" :data="publishVal.slice(0,5)" border disabled-hover>
+                  </b-table>
+                </div>
+                <div style="width: 48%;">
+                  <b-table :columns="publish" :data="publishVal.slice(5,10)" border disabled-hover>
+                  </b-table>
+                </div>
+              </div>
+            </div>
+          </v-full-block>
+          <v-full-block :rect="[25,480,885,440]">
+            <div class="table1 t-style1">
+              <!--弹窗按钮-->
+              <div class="cp-btn" @click="showMore2 = true">更多</div>
+              
+              <div class="cp-btn" @click="showIptPerModal2">{{isPer2?'数据':'占比'}}</div>
+              <h2>十大重点行业信用等级分布</h2>
+              <b-table :columns="hyCreditLv" :data="hyCreditLvVal.slice(0,5)" border disabled-hover>
+
+              </b-table>
+            </div>
+          </v-full-block>
+
+          <!--统计弹窗-->
+          <v-modal style="z-index: 20" :rect="[25,60,885,850]" label="十大重点行业信用等级占比统计" v-model="showIptStatModal2">
+            <div class="chart-container" style="padding-left: 0;width: 740px">
+              <div class="innerTips">
+
+              </div>
+              <div class="chart-inline" id="barChart6">
+              </div>
+              <div class="chart-inline">
+                <ul class="chart-tip" style="width: 160px;line-height: 52px;">
+                  <li class="ci-item">医疗业</li>
+                  <li class="ci-item">农业</li>
+                  <li class="ci-item">渔业</li>
+                  <li class="ci-item">建筑业</li>
+                  <li class="ci-item">教育业</li>
+                  <li class="ci-item">水产品加工业</li>
+                  <li class="ci-item">房产业</li>
+                  <li class="ci-item">互联网服务业</li>
+                  <li class="ci-item">餐饮业</li>
+                  <li class="ci-item">旅游业</li>
+                </ul>
+              </div>
+              <div class="chart-inline" id="barChart7">
+              </div>
+            </div>
+          </v-modal>
+          <p class="add">注：数据截止到2019年7月</p>
+          <!-- 更多-->
+          <v-modal style="z-index: 20" :rect="[25,70,885,850]" label="更多" v-model="showMore2">
+            <div class="table1 t-style1">
+              <!--弹窗按钮-->
+              <h2>十大重点行业信用等级分布</h2>
+              <b-table :columns="hyCreditLv" :data="hyCreditLvVal3" border disabled-hover>
+
+              </b-table>
+            </div>
+          </v-modal>
+
+          <v-full-block :rect="[960,480,885,440]">
+            <div class="table3 t-style2 special2">
+              <div class="cp-btn" @click="showIptPerModal3">{{isPer3?'数据':'占比'}}</div>
+              <h2 class="bg-title-none">十大重点行业红、黑名单占比</h2>
+              <b-table size="small"
+                       class="s-table"
+                       highlight-row
+                       @on-current-change="handleRBChart2"
+                       :columns="rbNameListPerc"
+                       :data="rbNameListPercVal"
+                       border>
+              </b-table>
+
+              <div class="chart-title">{{chartTitle1!==''?chartTitle1+"变化趋势":rbNameListPercVal[0].trade+"变化趋势"}}</div>
+              <div class="chart-inline pr10px" id="lineChart2">
+              </div>
+            </div>
+          </v-full-block>
+        </div>
+      </v-block>
+    </div>
+  </div>
+  <!--</b-scrollbar>-->
+</div>
+<script src="../js/components/v-header.js"></script>
+<script src="../js/components/v-block.js"></script>
+<script src="../js/components/v-full-block.js"></script>
+<script src="../js/components/v-chart-bar.js"></script>
+<script src="../js/components/v-modal.js"></script>
+<!--测试模拟请求-->
+<script src="../js/lib/utils/mock.js"></script>
+<script src="../mock/mockIndex2-3.js"></script>
+<script>
+var natFocusNum=getDataRc('RCData-natFocusNum');//重点人群数量
+var natFocusRankNum=getDataRc('RCData-natFocusRankNum');//重点人群信用等级分布
+var natFocusRankNum2=getDataRc('RCData-natFocusRankNum2');//重点人群信用等级分布
+var dyCreditLvVal=getDataRc('RCData-dyCreditLvVal');//党员各年龄段党员的信用等级
+var dyCreditLvVal2=getDataRc('RCData-dyCreditLvVal2');//党员各年龄段党员的信用等级
+var renderLineChart1=getDataRc('RCData-renderLineChart1');//重点人群信用指数变化趋势
+var renderBarChart1=getDataRc('RCData-renderBarChart1');//机关事业单位人员BCD等级变化趋势
+var renderBarChart2=getDataRc('RCData-renderBarChart2');//农村党员社区党员对比--农村党员
+var renderBarChart3=getDataRc('RCData-renderBarChart3');//农村党员社区党员对比--社区党员
+var hyCreditLvVal=getDataRc('RCData-hyCreditLvVal');//各行业信用等级分布
+//var hyCreditLvVal=getDataRc('RCData-hyCreditLvVal');//企业被处罚次数排名
+var impBaseValData=getDataRc('RCData-impBaseValData');
+var publishValData=getDataRc('RCData-publishValData');
+var hyCreditLvValData=getDataRc('RCData-hyCreditLvValData');
+var hyCreditLvVal2Data=getDataRc('RCData-hyCreditLvVal2Data');
+var rbNameListPercVal=getDataRc('RCData-rbNameListPercVal');//行业红名单占比、黑名单占比
+var lineData2=getDataRc('RCData-lineData2');//行业红名单占比、黑名单占比
+var impBaseVal=getDataRc('RCData-impBaseVal');//重点行业基本情况
+var lineData3=getDataRc('RCData-lineData3');//重点行业基本情况
+var rbNameListPercValData=getDataRc('RCData-rbNameListPercValData');//重点行业基本情况
+var rbNameListPercVal1Data=getDataRc('RCData-rbNameListPercVal1Data');//重点行业基本情况
+var ncsqdyINFO=getDataRc('RCData-ncsqdyINFO');//重点行业基本情况
+
+var renderBarChart4option={};
+var renderBarChart4Chart={};
+var renderBarChart5option={};
+var renderBarChart5Chart={};
+var renderBarChart6option={};
+var renderBarChart6Chart={};
+var renderBarChart7option={};
+var renderBarChart7Chart={};
+  var vm = new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        chartTitle1:'',
+        chartTitle2:'',
+        // 左页
+        // 表1 重点人群数量
+        importPerCount:  natFocusNum
+      /* natFocusNum */,
+        // 表2 党员信用
+        dyCreditLv: [
+          {title: '信用等级', key: 'list', width: '150px', align: 'center'},
+          {title: 'AAA', key: 'lv8', align: 'center'},
+          {title: 'AA', key: 'lv7', align: 'center'},
+          {title: 'A+', key: 'lv6', align: 'center'},
+          {title: 'A', key: 'lv5', align: 'center'},
+          {title: 'A-', key: 'lv4', align: 'center'},
+          {title: 'B', key: 'lv3', align: 'center'},
+          {title: 'C', key: 'lv2', align: 'center'},
+          {title: 'D', key: 'lv1', align: 'center'},
+        ],
+        dyCreditLvVal: dyCreditLvVal,
+        dyCreditLvVal1: dyCreditLvVal,
+        dyCreditLvVal2: dyCreditLvVal2
+     /*  dyCreditLvVal */,
+        // 表3 重点人群信用（弹窗：统计表格barChart4、5）
+        iptCreditLv: [
+          {title: '类型/等级', key: 'list', width: '150px', align: 'center'},
+          {title: 'AAA', key: 'lv8', align: 'center'},
+          {title: 'AA', key: 'lv7', align: 'center'},
+          {title: 'A+', key: 'lv6', align: 'center'},
+          {title: 'A', key: 'lv5', align: 'center'},
+          {title: 'A-', key: 'lv4', align: 'center'},
+          {title: 'B', key: 'lv3', align: 'center'},
+          {title: 'C', key: 'lv2', align: 'center'},
+          {title: 'D', key: 'lv1', align: 'center'},
+        ],
+        iptCreditLvVal: natFocusRankNum,//默认为常规数据
+        iptCreditLvVal1: natFocusRankNum,//常规数据
+        iptCreditLvVal2:  natFocusRankNum2,//百分比数据
+
+
+        // 右页
+        //表1重点行业基本情况
+        lineData3:  [1007.11, 1007.21,1007.75,1008.12, 1009.45, 1009.74],//折线图数据
+        impBase: [
+          {title: '排名', width: 60, key: 'index', align: 'center'},
+          {title: '行业名称', width: 200, key: 'trade', align: 'center'},
+          {title: '企业数量', width: 97, key: 'count', align: 'center'},
+          {title: '信用指数', width: 97, key: 'per', align: 'center'},
+        ],//表头数据
+
+        impBaseVal: impBaseValData,//表内
+
+        //表2被处罚次数(弹窗:更多)
+        publish: [
+          {title: '排名', key: 'index', width: '50px', align: 'center'},
+          {title: '行业名称', key: 'trade', width: '135px', align: 'center'},
+          {title: '企业数量', key: 'count', width: '99px', align: 'center'},
+          {title: '平均被处罚次数（每百家）', key: 'average', width: '140px', align: 'center'},
+        ],//表头数据
+        publishVal:publishValData,
+        //表3 行业信用等级(弹窗:统计表格6、7；更多)
+        hyCreditLv: [
+          {title: '信用等级', key: 'list', width: '150px', align: 'center'},
+          {title: 'AAA', key: 'lv8', align: 'center'},
+          {title: 'AA', key: 'lv7', align: 'center'},
+          {title: 'A+', key: 'lv6', align: 'center'},
+          {title: 'A', key: 'lv5', align: 'center'},
+          {title: 'A-', key: 'lv4', align: 'center'},
+          {title: 'B', key: 'lv3', align: 'center'},
+          {title: 'C', key: 'lv2', align: 'center'},
+          {title: 'D', key: 'lv1', align: 'center'},
+        ],
+        hyCreditLvVal: hyCreditLvValData,//默认十大重点行业信用等级分布
+        hyCreditLvVal1: hyCreditLvValData,//常规数据
+        hyCreditLvVal2: hyCreditLvVal2Data,//百分比数据
+        hyCreditLvVal3: hyCreditLvVal2Data,//默认更多数据
+        //红黑名单
+        rbNameListPerc: [
+          {title: '排名', width: 62, key: 'index', align: 'center'},
+          {title: '行业名称', width: 122, key: 'trade', align: 'center'},
+          {title: '红名单', width: 90, key: 'redList', align: 'center'},
+          {title: '黑名单', width: 90, key: 'blackList', align: 'center'},
+          {title: '异常经营名录', width: 90, key: 'unusual', align: 'center'}
+        ],
+        rbNameListPercVal: rbNameListPercValData,//默认红黑名单显示数据
+        rbNameListPercVal1: rbNameListPercVal1Data ,//百分比数据
+        lineData2: [
+          {
+            label: {show: 'true', position: 'top', color: '#fff'},
+            name: '红名单',
+            type: 'line',
+            data: [7, 7, 8, 10, 11, 12]/* lineData2.red */
+          },
+          {
+            label: {show: 'true', position: 'top', color: '#fff'},
+            name: '黑名单',
+            type: 'line',
+            data: [14, 14, 13, 12, 12, 11]/* lineData2.black */
+          },
+          {
+            label: {show: 'true', position: 'top', color: '#fff'},
+            name: '异常经营占比',
+            type: 'line',
+            data: [36, 35, 35, 35, 33, 33]/* lineData2.zb */
+          },
+        ],// 图表数据 红黑名单
+        barData2: ncsqdyINFO[0],
+        barData3: ncsqdyINFO[1],
+        dyFlag: true,
+        showHyCreditModal: false,//行业信用等级弹窗flag
+        showIptStatModal1: false,//统计弹窗1flag
+        showIptStatModal2: false,//统计弹窗2flag
+        showMore1: false,//更多弹窗1flag
+        showMore2: false,//更多弹窗1flag
+        isPer1: false,//占比数据切换
+        isPer2: false,//占比数据切换
+        isPer3: false,//占比数据切换
+        isPer4: false//占比数据切换
+      }
+    },
+    created: function () {
+    },
+    mounted: function () {
+      this.renderLineChart1();
+      this.renderLineChart2(this.lineData2);
+      this.renderLineChart3(this.lineData3);
+      this.renderBarChart1();
+      this.renderBarChart2(this.barData2.count, this.dyFlag);
+      this.renderBarChart3(this.barData3.count, this.dyFlag);
+    },
+    computed: {
+      allCityPeople: function () {
+        var arr = this.peopleTotal.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      },
+      allData: function () {
+        var arr = this.dataTotal.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      },
+      deptSubFormat: function () {
+        if (this.deptSubData.length === 0) {
+          return []
+        }
+        var max = this.deptSubData[0].num
+        return this.deptSubData.map(function (item) {
+          return {
+            name: item.dept,
+            value: item.num,
+            percent: item.num / max * 100,
+            label: item.num
+          }
+        })
+      },
+      industryTop5: function () {
+        return this.industryTop.slice(0, 5)
+      }
+    },
+    methods: {
+   	 toggleDyFlag: function () {
+   	        vm.dyFlag = !vm.dyFlag;
+   	        var data2 = vm.dyFlag ? this.barData2.count : this.barData2.percent,
+   	          data3 = vm.dyFlag ? this.barData3.count : this.barData3.percent;
+   	        vm.renderBarChart2(data2, this.dyFlag);
+   	        vm.renderBarChart3(data3, this.dyFlag);
+   	      },
+   	  showStatModal1: function () {
+        vm.showIptStatModal1 = true;
+        this.$nextTick(
+          function () {
+            vm.renderBarChart4();
+            vm.renderBarChart5();
+          }
+        )
+      },
+      showStatModal2:function(){
+        vm.showIptStatModal2 = true;
+        this.$nextTick(
+          function () {
+            vm.renderBarChart6();
+            vm.renderBarChart7();
+          }
+        )
+      },
+      showIptPerModal1: function () {
+        /*(暂不处理)数据百分比处理
+        for(var i = 0; i<4;i++){
+          console.log(vm.iptCreditLvVal[i].lv1);
+          var item = vm.iptCreditLvVal[i]
+          for(var j = 0;j<8;j++){
+            var key = 'lv'+(j+1)
+            console.log(item[key]);
+            item[key]=item[key]/100 + '%'
+          }
+        }
+        */
+        vm.isPer1 = !vm.isPer1;
+        vm.isPer1 ? vm.iptCreditLvVal = vm.iptCreditLvVal2 : vm.iptCreditLvVal = vm.iptCreditLvVal1;
+      },
+      showIptPerModal2: function () {
+        vm.isPer2 = !vm.isPer2;
+        vm.isPer2 ? vm.hyCreditLvVal = vm.hyCreditLvVal2 : vm.hyCreditLvVal = vm.hyCreditLvVal1;
+      },
+      showIptPerModal3: function () {
+        vm.isPer3 = !vm.isPer3;
+        vm.isPer3 ? vm.rbNameListPercVal = vm.rbNameListPercVal2 : vm.rbNameListPercVal = vm.rbNameListPercVal1;
+      },
+      //党员百分比切换
+      showIptPerModal4:function(row){
+        vm.isPer4 = !vm.isPer4;
+        vm.isPer4 ? vm.dyCreditLvVal = vm.dyCreditLvVal2 : vm.dyCreditLvVal = vm.dyCreditLvVal1;
+      },
+      handleRBChart2: function (row) {
+        this.renderLineChart2(row.chartData);
+        vm.chartTitle1 = row.trade;
+      },
+      handleRBChart3: function (row) {
+        this.renderLineChart3(row.chartData);
+        vm.chartTitle2 = row.trade;
+      },
+      renderLineChart1: function () {
+        var myChart = echarts.init(document.getElementById("lineChart1"));
+        var option = {
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            icon: 'circle',
+            bottom: 30,
+            textStyle: {
+              color: '#7893ad'
+            },
+            data: ['机关事业单位人员', '党员', '医护人员', '教师']
+          },
+          color: ['#3f5ee4', '#d20f60', '#1bd5c0','#ffea68' ],
+          grid: {
+            top: 20,
+            right: 5,
+            bottom: 90
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#0f1534'}
+            },
+            type: 'category',
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: {
+        	  min:995,
+            type: 'value',
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#0f1534'}
+            },
+          },
+          series: [
+            {
+              label: {
+                show: true,
+                position: 'top',
+                color: '#fff'
+              },
+              name: '机关事业单位人员',
+              type: 'line',
+              data: renderLineChart1.jgsy
+            },
+            {
+              label: {
+                show: true,
+                position: 'top',
+                color: '#fff'
+              },
+              name: '党员',
+              type: 'line',
+              data:  renderLineChart1.dy
+            },
+            {
+              label: {
+                show: true,
+                position: 'top',
+                color: '#fff'
+              },
+              name: '教师',
+              type: 'line',
+              data:  renderLineChart1.teacher
+            },
+            {
+              label: {
+                show: true,
+                position: 'top',
+                color: '#fff'
+              },
+              name: '医护人员',
+              type: 'line',
+              data: renderLineChart1.docter
+            },
+          ]
+        };
+        myChart.setOption(option)
+      },
+      renderLineChart2: function (series) {
+        var myChart = echarts.init(document.getElementById("lineChart2"));
+        var option = {
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            icon: 'circle',
+            bottom: 30,
+            textStyle: {
+              color: '#7893ad'
+            },
+            data: ['红名单', '黑名单', '异常经营占比']
+          },
+          color: ['#d20f60', '#3f5ee4', '#ffea68', '#1bd5c0'],
+          grid: {
+            top: 20,
+            right: 5,
+            bottom: 90
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#0f1534'}
+            },
+            type: 'category',
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#0f1534'}
+            },
+          },
+          series: series
+        };
+        myChart.setOption(option)
+      },
+      renderLineChart3: function (data) {
+        var myChart = echarts.init(document.getElementById("lineChart3"));
+        var option = {
+          tooltip: {
+            trigger: 'axis'
+          },
+          color: ['#3f5ee4'],
+          grid: {
+            top: 20,
+            right: 5,
+            bottom: 90
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#0f1534'}
+            },
+            type: 'category',
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: {
+            type: 'value',
+            min:984,
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#0f1534'}
+            },
+          },
+          series: {
+            type: 'line',
+            data: data,
+            label: {
+              show: true,
+              position: 'top',
+              color: '#fff'
+            }
+          }
+        };
+        myChart.setOption(option)
+      },
+      renderBarChart1: function () {
+        var myChart = echarts.init(document.getElementById('barChart1'));
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#6000d2', '#ffea68', '#d20036'],
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+        	  data: ['B级', 'C级', 'D级'],
+            icon: 'circle',
+            bottom: 30,
+            textStyle: {
+              color: '#7893ad'
+            }
+          },
+          grid: {
+            top: 20,
+            right: 5,
+            bottom: 90
+          },
+          xAxis: {
+            type: 'category',
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#0f1534'}
+            },
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: [
+            {
+              type: 'value',
+              splitNumber: 10,
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {color: '#8fa0cd'}
+              },
+              splitLine: {
+                show: true,
+                lineStyle: {color: '#0f1534'}
+              }
+            }
+          ],
+          series: [
+            {
+              label: {show: 'true', position: 'top', color: '#fff'},
+              name: 'B级',
+              type: 'bar',
+              data: renderBarChart1.dataB,
+              barMaxWidth: 8,
+              barGap: 10,
+              itemStyle: {
+                barBorderRadius: [3, 3, 0, 0]
+              },
+            },
+            {
+              label: {show: 'true', position: 'top', color: '#fff'},
+              name: 'C级',
+              type: 'bar',
+              data: renderBarChart1.dataC,
+              barMaxWidth: 8,
+              barGap: 10,
+              itemStyle: {
+                barBorderRadius: [3, 3, 0, 0]
+              },
+            },
+            {
+              label: {show: 'true', position: 'top', color: '#fff'},
+              name: 'D级',
+              type: 'bar',
+              data: renderBarChart1.dataD,
+              barMaxWidth: 8,
+              barGap:1,
+              itemStyle: {
+                barBorderRadius: [3, 3, 0, 0]
+              },
+            }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+      },
+      renderBarChart2: function (data, flag = true) {
+        var myChart = echarts.init(document.getElementById('barChart2'));
+        // 指定图表的配置项和数据
+        var option = {
+        		/* title: {
+                    text: '占比 / 人数',
+                    textStyle:{
+                      color:'#fff',
+                      fontSize:16
+                    },
+                    top:30
+                  }, */
+          grid: {
+        	  left: '30%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            show: false,
+            inverse: true,
+            type: 'value',
+          },
+          yAxis: {
+            show: false,
+            type: 'category',
+            data: ['AAA', 'AA', 'A+', 'A', 'A-', 'B', 'C', 'D']
+          },
+          series: [
+            {
+              label: {
+                normal: {
+                  show: true,
+                  position: 'left',
+                  color: '#fff',
+                  formatter: (params) => flag ? `${params.value}人` : `${params.value}%`
+                }
+              },
+              type: 'bar',
+              barGap: '14%',
+              data: data/* renderBarChart2 */,
+              barMaxWidth: 14,
+              itemStyle: {
+                color: '#0b87ed',
+                barBorderRadius: [0, 0, 0,0]
+              },
+            },
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+      },
+      renderBarChart3: function (data, flag = true) {
+        var myChart = echarts.init(document.getElementById('barChart3'));
+        // 指定图表的配置项和数据
+        var option = {
+          grid: {
+            left: '-8%',
+            right: '30%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            show: false,
+            type: 'value',
+          },
+          yAxis: {
+            show: false,
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            type: 'category',
+            data: ['AAA', 'AA', 'A+', 'A', 'A-', 'B', 'C', 'D']
+          },
+          series: [
+            {
+              label: {
+                normal: {
+                  show: true,
+                  position: 'right',
+                  color: '#fff',
+                  formatter: (params) => flag ? `${params.value}人` : `${params.value}%`
+                }
+              },
+              type: 'bar',
+              barGap: '14%',
+              data: data,
+              barMaxWidth: 14,
+              itemStyle: {
+            	  color: '#0f36ac',
+                barBorderRadius: [0, 0, 0,0]
+
+              },
+            },
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+      },
+      renderBarChart4: function () {
+        renderBarChart4Chart = echarts.init(document.getElementById('barChart4'));
+        // 指定图表的配置项和数据
+        renderBarChart4option = {
+  		 legend: {
+  	            icon: 'circle',
+  	            bottom: 0,
+  	            textStyle: {
+  	              color: '#7893ad',
+  	              fontSize:14
+  	            },
+  	            data: ['AAA', 'AA', 'A+', 'A','A-']
+  	          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            show: false,
+            inverse: true,
+            type: 'value',
+          },
+          yAxis: {
+            show: false,
+            type: 'category',
+            data: ['机关事业单位人员', '党员', '教师', '医护人员']
+          },
+          series: [
+
+        	  {
+
+                  label: {
+                    normal: {
+                      show: false,
+                      position: 'left',
+                      color: '#fff',
+                      formatter: '{c}%'
+                    }
+                  },
+                  name:'A-',
+                  type: 'bar',
+                  barGap: '14%',
+                  stack: 'red',
+                  data: [12.63, 7.36, 12.66, 14.85],
+                  barMaxWidth: 14,
+                  itemStyle: {
+
+                	  color: '#00b2dc',
+                    barBorderRadius: [0, 0, 0, 0]
+                  },
+                },
+                {
+                    label: {
+                      normal: {
+                        show: false,
+                        position: 'left',
+                        color: '#fff',
+                        formatter: '{c}%'
+                      }
+                    },
+                    name:'A',
+                    type: 'bar',
+                    barGap: '14%',
+                    stack: 'red',
+                    data: [17.63, 77.35, 40.43, 50.89],
+                    barMaxWidth: 14,
+                    itemStyle: {
+                  	  color: '#15b58a',
+                      barBorderRadius: [0, 0, 0, 0]
+                    },
+                  },
+
+                {
+                    label: {
+                      normal: {
+                        show: false,
+                        position: 'left',
+                        color: '#fff',
+                        formatter: '{c}%'
+                      }
+                    },
+                    name:'A+',
+                    type: 'bar',
+                    barGap: '14%',
+                    stack: 'red',
+                    data: [57.57, 12.19, 43.82, 27.08],
+                    barMaxWidth: 14,
+                    itemStyle: {
+                  	  color: '#d78000',
+
+                      barBorderRadius: [0, 0, 0, 0]
+
+                    },
+                  },
+
+                    {
+                        label: {
+                          normal: {
+                            show: false,
+                            position: 'left',
+                            color: '#fff',
+                            formatter: '{c}%'
+                          }
+                        },
+                        name:'AA',
+                        type: 'bar',
+                        barGap: '14%',
+                        stack: 'red',
+                        data: [6.68, 0.79, 1.63, 4.44],
+                        barMaxWidth: 14,
+                        itemStyle: {
+
+                      	  color: '#a40886',
+                          barBorderRadius: [0, 0, 0, 0]
+                        },
+                      },
+                      {
+                          label: {
+                            normal: {
+                              show: false,
+                              position: 'left',
+                              color: '#fff',
+                              formatter: '{c}%'
+                            }
+                          },
+                          type: 'bar',
+                          barGap: '14%',
+                          stack: 'red',
+                          name:'AAA',
+                          data: [4.17, 0.39, 0.77, 1.62],
+                          barMaxWidth: 14,
+                          itemStyle: {
+                        	  color: '#b20f56',
+                            barBorderRadius: [0, 0, 0, 0]
+                          },
+                        },
+                      {
+                          name: '消费合计总量',
+                          type: 'bar',
+                          stack: 'red',
+                          label: {
+                          normal: {
+                          offset:['50', '80'],
+                          show: true,
+                          position: 'left',
+                          formatter:'{c}',
+                          textStyle:{   color: '#fff', }
+
+                          }
+                          },
+                          itemStyle:{
+                          normal:{
+                          color:'rgba(128, 128, 128, 0)'
+                          }
+                          },
+                          data: [98.89, 99.31, 98.08, 98.72]
+                          }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+       renderBarChart4Chart.setOption(renderBarChart4option);
+       renderBarChart4Chart.on('legendselectchanged', function(obj) {
+			let data=[0,0,0,0]
+
+         	$.each(renderBarChart4option.series,(index,item)=>{
+         		if(obj.selected[item.name]==true){
+         			data =Array.from(data,(x,i)=>{
+
+         			x+=item.data[i];
+
+         			return parseFloat(x.toFixed(2)) })
+         		}
+
+         	});
+			renderBarChart4option.series[5].data=data
+            renderBarChart4Chart.setOption(renderBarChart4option);
+
+        });
+
+      },
+      renderBarChart5: function () {
+       renderBarChart5Chart = echarts.init(document.getElementById('barChart5'));
+        // 指定图表的配置项和数据
+       renderBarChart5option = {
+    		   legend: {
+     	            icon: 'circle',
+     	            bottom: 0,
+     	            textStyle: {
+     	              color: '#7893ad',
+     	              fontSize:14
+     	            },
+     	            data: ['B', 'C', 'D']
+     	          },
+   		 grid: {left: '-8%', right: '10%', bottom: '3%', containLabel: true},
+            xAxis: {show: false, type: 'value',},
+            yAxis: {
+              show: false,
+              axisLine: {show: false},
+              axisTick: {show: false},
+              type: 'category',
+              data: ['机关事业单位人员', '党员', '教师', '医护人员']
+            },
+        series: [
+            {
+              label: {
+                normal: {
+                  show: false,
+                  position: 'right',
+                  color: '#fff',
+                  formatter: '{c}%'
+                }
+              },
+              type: 'bar',
+              barGap: '14%',
+              name:'B',
+              stack: 'red',
+              data: [0.80,0.88, 0.42, 0.87],
+              barMaxWidth: 14,
+              itemStyle: {
+                color: '#4170dc',
+
+                barBorderRadius: [0, 0, 0, 0],
+                emphasis: {
+                    barBorderRadius: 0
+                },
+              },
+            },
+              {
+                  label: {
+                    normal: {
+                      show: false,
+                      position: 'right',
+                      color: '#fff',
+                      formatter: '{c}%'
+                    }
+                  },
+                  name:'C',
+                  type: 'bar',
+                  stack: 'red',
+                  barGap: '14%',
+                  data: [0.20, 0.39, 0.11, 0.08],
+                  barMaxWidth: 14,
+                  itemStyle: {
+                    color: '#0044dc',
+
+                    barBorderRadius: [0, 0, 0, 0]
+
+                  },
+            },
+            {
+                label: {
+                  normal: {
+                    show: false,
+                    position: 'right',
+                    color: '#fff',
+                    formatter: '{c}%'
+                  }
+                },
+                name:'D',
+                type: 'bar',
+                stack: 'red',
+                barGap: '14%',
+                data: [0.28, 0.65, 0.16, 0.16],
+                barMaxWidth: 14,
+                itemStyle: {
+                  color: '#0f36ac',
+
+                  barBorderRadius: [0, 0, 0, 0]
+                },
+          },
+          {
+              name: '消费合计总量',
+              type: 'bar',
+              stack: 'red',
+              label: {
+              normal: {
+              offset:['50', '80'],
+              show: true,
+              position: 'right',
+              formatter:'{c}',
+              textStyle:{   color: '#fff', }
+
+              }
+              },
+              itemStyle:{
+              normal:{
+              color:'rgba(128, 128, 128, 0)'
+              }
+              },
+              data: [1.11, 0.69, 1.92, 1.28],
+              }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        renderBarChart5Chart.setOption(renderBarChart5option);
+        renderBarChart5Chart.on('legendselectchanged', function(obj) {
+ 			let data=[0,0,0,0]
+
+          	$.each(renderBarChart5option.series,(index,item)=>{
+          		if(obj.selected[item.name]==true){
+          			data =Array.from(data,(x,i)=>{
+
+          			x+=item.data[i];
+
+          			return parseFloat(x.toFixed(2)) })
+          		}
+
+          	});
+ 			renderBarChart5option.series[3].data=data
+             renderBarChart5Chart.setOption(renderBarChart5option);
+
+         });
+      },
+      renderBarChart6: function () {
+        var renderBarChart6Chart = echarts.init(document.getElementById('barChart6'));
+        // 指定图表的配置项和数据
+        var renderBarChart6option = {
+        		 legend: {
+       	            icon: 'circle',
+       	            bottom: 0,
+       	            textStyle: {
+       	              color: '#7893ad',
+       	              fontSize:14
+       	            },
+       	            data: ['AAA', 'AA', 'A+', 'A','A-']
+       	          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            show: false,
+            inverse: true,
+            type: 'value',
+          },
+          yAxis: {
+            show: false,
+            type: 'category',
+            data: ['行业1', '行业2', '行业3', '行业4', '行业5', '行业6', '行业7', '行业8', '行业9', '行业10' ]
+          },
+ series: [
+
+	 {
+         label: {
+           normal: {
+             show: false,
+             position: 'left',
+             color: '#fff',
+             formatter: '{c}%'
+           }
+         },
+         name:'A-',
+         type: 'bar',
+         barGap: '14%',
+         stack: 'red',
+         data: [ 3.29, 0.34,1.83,0.74,0, 0,0.35,  0.58, 0.32,0.35],
+         barMaxWidth: 14,
+         itemStyle: {
+       	  color: '#00b2dc',
+           barBorderRadius: [0, 0, 0, 0]
+         },
+       }, {
+           label: {
+               normal: {
+                 show: false,
+                 position: 'left',
+                 color: '#fff',
+                 formatter: '{c}%'
+               }
+             },
+             name:'A',
+             type: 'bar',
+             barGap: '14%',
+             stack: 'red',
+             data: [95.08,99.02, 88.58,92.23, 83.37, 98.42,94.72, 91.07, 96.62,83.37],
+             barMaxWidth: 14,
+             itemStyle: {
+           	  color: '#15b58a',
+               barBorderRadius: [0, 0, 0, 0]
+             },
+           },
+
+                       {
+                           label: {
+                             normal: {
+                               show: false,
+                               position: 'left',
+                               color: '#fff',
+                               formatter: '{c}%'
+                             }
+                           },
+                           name:'A+',
+                           type: 'bar',
+                           barGap: '14%',
+                           stack: 'red',
+                           data: [1.63, 0.23, 0.91,  3.71,  12.7,  1.58 ,1.95, 4.10,   2.53,0.24,],
+                           barMaxWidth: 14,
+                           itemStyle: {
+                         	  color: '#d78000',
+
+                             barBorderRadius: [0, 0, 0, 0]
+                           },
+                         },
+
+                         {
+                             label: {
+                               normal: {
+                                 show: false,
+                                 position: 'left',
+                                 color: '#fff',
+                                 formatter: '{c}%'
+                               }
+                             },
+                             name:'AA',
+                             type: 'bar',
+                             barGap: '14%',
+                             stack: 'red',
+
+                             data: [0, 0.14,  0,  0.17,  0,  0, 0.44,   0.79,  0,14.21],
+                             barMaxWidth: 14,
+                             itemStyle: {
+
+                           	  color: '#a40886',
+                               barBorderRadius: [0, 0, 0, 0]
+                             },
+                           },
+
+                           {
+                               label: {
+                                 normal: {
+                                   show: false,
+                                   position: 'left',
+                                   color: '#fff',
+                                   formatter: '{c}%'
+                                 }
+                               },
+                               type: 'bar',
+                               barGap: '14%',
+                               stack: 'red',
+
+                               name:'AAA',
+                               data: [0,0.02,0,0.23,0,0,0.38, 0.58, 0.21, 1.58],
+
+                               barMaxWidth: 14,
+                               itemStyle: {
+
+                             	  color: '#b20f56',
+                                 barBorderRadius: [0, 0, 0, 0]
+                               },
+                             },
+                             {
+                                 name: '消费合计总量',
+                                 type: 'bar',
+                                 stack: 'red',
+                                 label: {
+                                 normal: {
+                                 offset:['50', '80'],
+                                 show: true,
+                                 position: 'left',
+                                 formatter:'{c}',
+                                 textStyle:{   color: '#fff', }
+
+                                 }
+                                 },
+                                 itemStyle:{
+                                 normal:{
+                                 color:'rgba(128, 128, 128, 0)'
+                                 }
+                                 },
+                                 data: [100,99.76, 91.32,96.72, 96.97, 100,97.83, 97.12, 99.67,99.75]
+                                 }
+                 ]
+               };
+               // 使用刚指定的配置项和数据显示图表。
+              renderBarChart6Chart.setOption(renderBarChart6option);
+              renderBarChart6Chart.on('legendselectchanged', function(obj) {
+       			let data=[0,0,0,0,0,0,0,0,0,0]
+
+                	$.each(renderBarChart6option.series,(index,item)=>{
+                		if(obj.selected[item.name]==true){
+                			data =Array.from(data,(x,i)=>{
+
+                			x+=item.data[i];
+
+                			return parseFloat(x.toFixed(2)) })
+                		}
+
+                	});
+       			renderBarChart6option.series[5].data=data
+                   renderBarChart6Chart.setOption(renderBarChart6option);
+
+               });
+
+      },
+      renderBarChart7: function () {
+        renderBarChart7Chart = echarts.init(document.getElementById('barChart7'));
+        // 指定图表的配置项和数据
+        renderBarChart7option = {
+        		 legend: {
+      	            icon: 'circle',
+      	            bottom: 0,
+      	            textStyle: {
+      	              color: '#7893ad',
+      	              fontSize:14
+      	            },
+      	            data: ['B', 'C', 'D']
+      	          },
+          grid: {left: '-8%',right: '10%',bottom: '3%',containLabel: true},
+          xAxis: {show: false,type: 'value',},
+          yAxis: {show: false,axisLine: {show: false},axisTick: {show: false},type: 'category',
+            data: ['行业1', '行业2', '行业3', '行业4', '行业5', '行业6', '行业7', '行业8', '行业9', '行业10' ]
+          },
+          series: [
+                   {
+                     label: {
+                       normal: {
+                         show: false,
+                         position: 'right',
+                         color: '#fff',
+                         formatter: '{c}%'
+                       }
+                     },
+                     type: 'bar',
+                     barGap: '14%',
+                     name:'B',
+                     stack: 'red',
+                     data: [0,0.23,7.76,1.65,7.11,0,1.76,2.16,0.21,0.25],
+                     barMaxWidth: 14,
+                     itemStyle: {
+                       color: '#4170dc',
+
+                       barBorderRadius: [0, 0, 0, 0]
+                     },
+                   },
+                     {
+                         label: {
+                           normal: {
+                             show: false,
+                             position: 'right',
+                             color: '#fff',
+                             formatter: '{c}%'
+                           }
+                         },
+                         name:'C',
+                         type: 'bar',
+                         stack: 'red',
+                         barGap: '14%',
+                         data: [0,0.01,0,0.18,0.41,0,0.06,0.22,0,0],
+                         barMaxWidth: 14,
+                         itemStyle: {
+                           color: '#0044dc',
+
+                           barBorderRadius: [0, 0, 0, 0]
+                         },
+                   },
+                   {
+                       label: {
+                         normal: {
+                           show: false,
+                           position: 'right',
+                           color: '#fff',
+                           formatter: '{c}%'
+                         }
+                       },
+                       name:'D',
+                       type: 'bar',
+                       stack: 'red',
+                       barGap: '14%',
+                       data: [0,0.00,0.91,1.35,1.62,0,0.35,0.50,0.11,0],
+                       barMaxWidth: 14,
+                       itemStyle: {
+                         color: '#0f36ac',
+
+                         barBorderRadius: [0, 0, 0, 0]
+                       },
+                 },
+                 {
+                     name: '消费合计总量',
+                     type: 'bar',
+                     stack: 'red',
+                     label: {
+                     normal: {
+                     offset:['50', '80'],
+                     show: true,
+                     position: 'right',
+                     formatter:'{c}',
+                     textStyle:{   color: '#fff', }
+
+                     }
+                     },
+                     itemStyle:{
+                     normal:{
+                     color:'rgba(128, 128, 128, 0)'
+                     }
+                     },
+                     data: [0,0.24,8.68, 3.18,9.14, 0, 2.17, 2.88, 0.33, 0.25],
+                     }
+                 ]
+               };
+               // 使用刚指定的配置项和数据显示图表。
+               renderBarChart7Chart.setOption(renderBarChart7option);
+               renderBarChart7Chart.on('legendselectchanged', function(obj) {
+        			let data=[0,0,0,0,0,0,0,0,0,0]
+
+                 	$.each(renderBarChart7option.series,(index,item)=>{
+                 		if(obj.selected[item.name]==true){
+                 			data =Array.from(data,(x,i)=>{
+
+                 			x+=item.data[i];
+
+                 			return parseFloat(x.toFixed(2)) })
+                 		}
+
+                 	});
+        			renderBarChart7option.series[3].data=data
+                    renderBarChart7Chart.setOption(renderBarChart7option);
+
+                });
+
+      },
+    }
+  })
+</script>
+</body>
+</html>

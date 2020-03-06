@@ -1,0 +1,92 @@
+#app .screen-wrapper .main .block2 .table1 {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: none;
+}
+#app .screen-wrapper .main .block2 .table1 > h2 {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  line-height: 50px;
+  background: url("../images/title-bg.png") center bottom no-repeat;
+  -webkit-background-size: 100% 100%;
+  background-size: 100% 50%;
+}
+#app .screen-wrapper .main .block2 .table1 .per-count .pc-item {
+  display: block;
+  padding-left: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+#app .screen-wrapper .main .block2 .table1 .per-count .pc-item .pci-num {
+  display: block;
+}
+#app .screen-wrapper .main .block2 .table1 .per-count .pc-item .pci-title {
+  display: block;
+}
+#app .screen-wrapper .main .block2 .table1 .bg-title-none {
+  background: none;
+}
+#app .screen-wrapper .main .block2 .table3 {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#app .screen-wrapper .main .block2 .table3 .bg-title-none {
+  background: none;
+}
+#app .screen-wrapper .main .block2 .table3 span {
+  font-size: 16px;
+}
+#app .screen-wrapper .main .block2 .table3 > h2 {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  line-height: 50px;
+  -webkit-background-size: 100% 100%;
+  background-size: 100% 50%;
+  background: url("../images/title-bg.png") center bottom no-repeat;
+}
+#app .screen-wrapper .main .block2 .table3 span {
+  font-size: 12px;
+}
+#app .screen-wrapper .main .block2 .table3 span:nth-child(4) {
+  line-height: 1.5;
+}
+#app .screen-wrapper .main .block2 .table3 .per-count .pc-item {
+  display: block;
+  padding-left: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+#app .screen-wrapper .main .block2 .table3 .per-count .pc-item .pci-num {
+  display: block;
+}
+#app .screen-wrapper .main .block2 .table3 .per-count .pc-item .pci-title {
+  display: block;
+}
+#app .screen-wrapper .main .block2 .table3 .s-table {
+  overflow: visible;
+  display: inline-block;
+  width: 455px;
+  vertical-align: top;
+}
+#app .screen-wrapper .main .block2 .table3 .s-table .bin-table-small td {
+  height: 30px;
+}
+#app .screen-wrapper .main .block2 .table3 .chart-title {
+  position: absolute;
+  right: 122px;
+  top: 70px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #161b41;
+  display: block;
+  width: 160px;
+  text-align: center;
+  margin: 0 auto;
+  line-height: 30px;
+}

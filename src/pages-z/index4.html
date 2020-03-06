@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>镇街信用分析</title>
+  <!--required-->
+  <!--核心库、动画库、请求库-->
+  <script src="../js/lib/vue.min.js"></script>
+  <script src="../js/lib/utils/axios.min.js"></script>
+  <!--required end-->
+  <!--第三方库和自己编写的插件-->
+  <!--bin-ui-->
+  <link rel="stylesheet" href="../js/lib/bin-ui/styles/index.css">
+  <script src="../js/lib/bin-ui/bin-ui.umd.min.js"></script>
+  <!--charts-->
+  <script src="../js/lib/echarts/echarts.min.js"></script>
+  <script src="../js/lib/echarts/extension/bmap.min.js"></script>
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mf9v9D2wro0QuBfsuhPl8wltrwcFSZqX"></script>
+  <!--self-->
+  <!--  <link rel="stylesheet" href="../styles/index.css">-->
+  <link rel="stylesheet" href="../styles/reset.css">
+  <link rel="stylesheet" href="../styles/update.css">
+  <link rel="stylesheet" href="../styles/index4.css">
+  <link rel="stylesheet" href="../styles/rc_table.css">
+</head>
+<body>
+<div id="app" v-cloak>
+  <!--<b-scrollbar style="height:100%;">-->
+  <div class="screen-wrapper">
+    <v-header label="荣成市社会信用综合分析平台">
+      <a href="index.html">全市信用综合分析平台</a>
+      <a href="index2.html">个人信用分析</a>
+      <a href="index3.html">企业信用分析</a>
+      <a href="index4.html" class="active">镇街信用分析</a>
+      <a href="index5.html">信用奖惩分析</a>
+    </v-header>
+    <div class="main">
+      <v-block label="村居信用基本情况" :rect="[40,20,1350,944]">
+        <div class="block1" flex="main:justify-a">
+          <div class="block1-1">
+            <!--荣成地图-->
+            <v-block :rect="[0,20,450,150]" class="map-data-bar">
+              <div class="map-title"><span>荣成市镇街概况</span></div>
+              <div class="map-data" flex="main:justify-a">
+                <span flex="main:justify-a">
+                  <span class="add-box">
+                    <p class="add-num">28</p>
+                    <p class="add-unit">镇街数量（个）</p>
+                  </span>
+                </span>
+                <span flex="main:justify-a">
+                  <span class="add-box">
+                    <p class="add-num">229</p>
+                    <p class="add-unit">村居数量（个）</p>
+                  </span>
+                </span>
+                <span flex="main:justify-a">
+                  <span class="add-box">
+                    <p class="add-num">509661</p>
+                    <p class="add-unit">村居人口（人）</p>
+                  </span>
+                </span>
+              </div>
+            </v-block>
+            <div id="rcMapChart"></div>
+          </div>
+          <rc-table :rc-table-data="zrrRcTableData"
+                    :rect="[510,70,350,400]"></rc-table>
+          <rc-table :rc-table-data="qyRcTableData"
+                    :rect="[510,500,350,400]"></rc-table>
+          <div class="block1-3">
+            <div id="cityLineChart"></div>
+            <div id="townLineChart"></div>
+          </div>
+        </div>
+      </v-block>
+      <v-block label="信用评级数据分析" :rect="[1410,20,2370,944]">
+        <div class="block2" flex>
+          <div class="block2-2">
+            <div class="ring-wrapper">
+              <p class="title">市级指标占比分析</p>
+              <div class="double-ring" flex>
+                <div id="cityDoubleRingChartL">
+                </div>
+                <div id="cityDoubleRingChartR">
+                </div>
+              </div>
+            </div>
+            <div class="ring-wrapper">
+              <p class="title">{{currentTown}}指标占比分析</p>
+              <div class="double-ring" flex>
+                <div id="townDoubleRingChartL">
+                </div>
+                <div id="townDoubleRingChartR">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="block2-3">
+            <div class="block2-3-1">
+              <p class="block-title">
+                <span class="t-content">农村信用等级规划及对应分值</span>
+              </p>
+              <div class="dipan specialBot special">
+                <div class="rank-table" flex="main:justify">
+                  <div class="left-bar">
+                    <div class="base-core">基础分</div>
+                    <div class="base-core-line" style="top:0;">1060</div>
+                    <div class="base-core-line" style="top:50px;">1040</div>
+                    <div class="base-core-line" style="top:100px;">1020</div>
+                    <div class="base-core-line" style="color: #0f36ac;top:150px;">1000</div>
+                    <div class="base-core-line" style="top:200px;">990</div>
+                    <div class="base-core-line" style="top:250px;">800</div>
+                  </div>
+                  <div class="block-level">
+                    <ul class="level-container">
+                      <li>
+                        <div>五星</div>
+                        <div>
+                          <b-rate :value="5" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv5.count}}人</div>
+                        <div class="perc">{{lvData.lv5.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>四星</div>
+                        <div>
+                          <b-rate :value="4" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv4.count}}人</div>
+                        <div class="perc">{{lvData.lv4.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>三星</div>
+                        <div>
+                          <b-rate :value="3" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv3.count}}人</div>
+                        <div class="perc">{{lvData.lv3.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>二星</div>
+                        <div>
+                          <b-rate :value="2" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv2.count}}人</div>
+                        <div class="perc">{{lvData.lv2.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>一星</div>
+                        <div>
+                          <b-rate :value="1" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv1.count}}人</div>
+                        <div class="perc">{{lvData.lv1.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>零星</div>
+                        <div style="padding-top: 7px;"><img style="width: 18px;" src="../images/star-black.png"
+                                                            alt="black"/></div>
+                        <div class="count">{{lvData.lv0.count}}人</div>
+                        <div class="perc">{{lvData.lv0.percent}}%</div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="block2-3-1" style="padding-top: 35px;">
+              <p class="block-title">
+                <span class="t-content">农村信用等级规划及对应分值</span>
+              </p>
+              <div class="dipan specialBot special">
+                <div class="rank-table" flex="main:justify">
+                  <div class="left-bar">
+                    <div class="base-core">基础分</div>
+                    <div class="base-core-line" style="top:0;">1060</div>
+                    <div class="base-core-line" style="top:50px;">1040</div>
+                    <div class="base-core-line" style="top:100px;">1020</div>
+                    <div class="base-core-line" style="color: #0f36ac;top:150px;">1000</div>
+                    <div class="base-core-line" style="top:200px;">990</div>
+                    <div class="base-core-line" style="top:250px;">800</div>
+                  </div>
+                  <div class="block-level">
+                    <ul class="level-container">
+                      <li>
+                        <div>五星</div>
+                        <div>
+                          <b-rate :value="5" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv5.count}}人</div>
+                        <div class="perc">{{lvData.lv5.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>四星</div>
+                        <div>
+                          <b-rate :value="4" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv4.count}}人</div>
+                        <div class="perc">{{lvData.lv4.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>三星</div>
+                        <div>
+                          <b-rate :value="3" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv3.count}}人</div>
+                        <div class="perc">{{lvData.lv3.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>二星</div>
+                        <div>
+                          <b-rate :value="2" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv2.count}}人</div>
+                        <div class="perc">{{lvData.lv2.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>一星</div>
+                        <div>
+                          <b-rate :value="1" disabled disabled-void-color="#3d475d"
+                                  :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                        </div>
+                        <div class="count">{{lvData.lv1.count}}人</div>
+                        <div class="perc">{{lvData.lv1.percent}}%</div>
+                      </li>
+                      <li>
+                        <div>零星</div>
+                        <div style="padding-top: 7px;"><img style="width: 18px;" src="../images/star-black.png"
+                                                            alt="black"/></div>
+                        <div class="count">{{lvData.lv0.count}}人</div>
+                        <div class="perc">{{lvData.lv0.percent}}%</div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="block2-4">
+            <rc-table class="lv-table" :rc-table-data="cityCreditLv" :rect="[30,4,480,400]"></rc-table>
+            <rc-table class="lv-table" :rc-table-data="townCreditLv" :rect="[30,450,480,400]"></rc-table>
+            <rc-table class="fund-table" :rc-table-data="cityFundAnalyze" :rect="[540,4,410,400]"></rc-table>
+            <rc-table class="fund-table" :rc-table-data="townFundAnalyze" :rect="[540,450,410,400]"></rc-table>
+          </div>
+
+          <div class="block2-1">
+            <div flex="dir:top" class="mb20 h425">
+              <div flex-box="1" class="ml20">
+                <p class="block-title">
+                  <span>镇村PK</span>
+                  <span class="select-tip" @click="showModal('select1')">选择  ></span>
+                </p>
+                <p class="selected">
+                  <span>已选城镇:</span>
+                  <span class="selected-inner" v-for="(item,index) in selects1">{{item}}</span>
+                </p>
+
+              </div>
+              <div flex-box="1" class="ml20 h425">
+                <p class="block-title">
+                  <span>市级层面</span>
+                </p>
+                <div class="table" flex>
+                  <div class="col" flex="dir:top">
+                    <div class="row">数据PK/镇名</div>
+                    <div class="row">人口数</div>
+                    <div class="row">信息总量</div>
+                    <div class="row">百人信息量</div>
+                    <div class="row">信用指数</div>
+                  </div>
+                  <div class="col" flex="dir:top" v-for="(item,index) in select1Data">
+                    <div class="row">{{item.name}}</div>
+                    <div class="row">{{item.pers}}</div>
+                    <div class="row">{{item.msgs}}</div>
+                    <div class="row">{{item.hundred}}</div>
+                    <div class="row">{{item.credit}}</div>
+                  </div>
+                  <div class="col tip" v-show="select1Data.length<2">请选择乡镇</div>
+                  <div class="col tip" v-show="select1Data.length<1">请选择乡镇</div>
+                </div>
+
+              </div>
+            </div>
+            <div flex="dir:top" class="mb20">
+              <div flex-box="1" class="ml20">
+                <p class="block-title">
+                  <span>村居PK</span>
+                  <span class="select-tip" @click="showModal('select2')">选择  ></span>
+                </p>
+                <p class="selected">
+                  <span>已选城镇:</span>
+                  <span class="selected-inner" v-for="(item,index) in selects2">{{item}}</span>
+                </p>
+
+              </div>
+              <div flex-box="1" class="ml20">
+                <p class="block-title">
+                  <span>市级层面</span>
+                </p>
+                <div class="table" flex>
+                  <div class="col" flex="dir:top">
+                    <div class="row">数据PK/镇名</div>
+                    <div class="row">人口数</div>
+                    <div class="row">信息总量</div>
+                    <div class="row">百人信息量</div>
+                    <div class="row">信用指数</div>
+                  </div>
+                  <div class="col" flex="dir:top" v-for="(item,index) in select2Data">
+                    <div class="row">{{item.name}}</div>
+                    <div class="row">{{item.pers}}</div>
+                    <div class="row">{{item.msgs}}</div>
+                    <div class="row">{{item.hundred}}</div>
+                    <div class="row">{{item.credit}}</div>
+                  </div>
+                  <div class="col tip" v-show="select2Data.length<2">请选择乡镇</div>
+                  <div class="col tip" v-show="select2Data.length<1">请选择乡镇</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <v-modal :rect="[1345,65,620,415]" label="选择村镇" v-model="select1">
+          <div class="double-select">
+            <div class="btns" flex="wrap:wrap">
+              <div class="btn" v-for="(item,index) in countries1"
+                   @click="handleSelect(item,1)"
+                   :class="selects1[0]===item || selects1[1]===item?'active':''">
+                <span class="click-btn">{{item}}</span>
+                <span class="cancel" @click.stop="del(index,1)">取消</span>
+              </div>
+            </div>
+          </div>
+        </v-modal>
+        <v-modal :rect="[1345,510,620,415]" label="选择村镇" v-model="select2">
+          <div class="double-select">
+            <div class="btns" flex="wrap:wrap">
+              <div class="btn" v-for="(item,index) in countries2"
+                   @click="handleSelect(item,2)"
+                   :class="selects2[0]===item || selects2[1]===item?'active':''">
+                <span class="click-btn">{{item}}</span>
+                <span class="cancel" @click.stop="del(index,2)">取消</span>
+              </div>
+            </div>
+          </div>
+        </v-modal>
+        <v-modal :rect="[885,66,640,860]" label="更多" v-model="more">
+          <b-table size="small"
+                   class="s-table modal-table"
+                   highlight-row
+                   @on-current-change="handleLineChart"
+                   :columns="analyze"
+                   :data="analyzeVal"
+                   border>
+          </b-table>
+        </v-modal>
+
+      </v-block>
+
+    </div>
+  </div>
+  <!--</b-scrollbar>-->
+</div>
+<script src="../js/components/v-header.js"></script>
+<script src="../js/components/v-block.js"></script>
+<script src="../js/components/v-full-block.js"></script>
+<script src="../js/components/v-chart-bar.js"></script>
+<script src="../js/components/v-modal.js"></script>
+<script src="../js/components/rc-table.js"></script>
+<!--荣成的数据标志-->
+<script src="../js/lib/echarts/rcGeoCoord.js"></script>
+
+<!--测试模拟请求-->
+<script src="../js/lib/utils/mock.js"></script>
+<script src="../mock/mockIndex4.js"></script>
+<script src="../mock/mockIndex3.js"></script>
+<script src="../mock/mockIndex4_new.js"></script>
+<!--<script src="../mock/mockMap.js"></script>-->
+<script>
+  var corp = [54800, 22486, 22486]
+  // 格式转换，把镇街数据转换为带坐标的数据
+  var convertData = function (data) {
+    var res = []
+    for (var i = 0; i < data.length; i++) {
+      var geoCoord = geoCoordMap[data[i].name]
+      if (geoCoord) {
+        res.push({
+          name: data[i].name,
+          value: geoCoord.concat(data[i].value),
+          row: data[i]
+        })
+      }
+    }
+    return res
+  }
+
+  // 简单处理深拷贝问题
+  var deepClone = function (obj) {
+    return JSON.parse(JSON.stringify(obj))
+  }
+  var vm = new Vue({
+    el: '#app',
+    data () {
+      return {
+        persData: 26681900,
+        comsData: 26213590,
+        countriesData: {
+          comsCols: [
+            { title: '信用等级', key: 'lv', align: 'center' },
+            { title: '占比', key: 'perc', align: 'center' },
+            { title: '人数', key: 'count', align: 'center' }
+          ],
+          comsData: [],
+          persCols: [
+            { title: '信用等级', key: 'lv', align: 'center' },
+            { title: '占比', key: 'perc', align: 'center' },
+            { title: '人数', key: 'count', align: 'center' }
+          ],
+          persData: []
+        },
+        industryTop: [],
+
+        checkedCities1: ['上海', '北京'],
+        countries1: ['乡镇一', '乡镇二', '乡镇三', '四', '五', '六', '七', '八', '九', '十', '十一'],
+        selects1: ['乡镇一', '乡镇二'],
+        select1: false,
+        select1Data: [],
+
+        checkedCities2: ['上地', '昌平'],
+        countries2: ['村一', '村二', '村三', '四', '五', '六', '七', '八', '九', '十', '十一'],
+        selects2: ['村一', '村二'],
+        select2: false,
+        select2Data: [],
+
+        //红黑名单
+        //表头数据
+        analyze: [
+          { title: '排名', width: 60, key: 'index', align: 'center' },
+          { title: '镇街名称', width: 160, key: 'name', align: 'center' },
+          { title: '指数平均分', width: 100, key: 'average', align: 'center' },
+          { title: '人口', width: 80, key: 'pers', align: 'center' },
+          { title: '数据总量', width: 80, key: 'total', align: 'center' },
+          { title: '百人数据量', width: 100, key: 'hundred', align: 'center' }
+        ],
+        // 表内数据
+        analyzeVal: [],
+        //村居专项分析数据
+        lineData: [
+          {
+            label: { show: 'true', position: 'top', color: '#fff' },
+            name: '数据量',
+            type: 'line',
+            data: [100, 404, 408, 503, 402, 1209, 500]
+          },
+          {
+            label: { show: 'true', position: 'top', color: '#fff' },
+            name: '平均分',
+            type: 'line',
+            data: [300, 705, 502, 609, 304, 1001, 600]
+          }
+        ],// 村居专项分析图表 红黑名单
+
+        more: false,
+
+        chartLendge: {
+          name: 'xxxxx镇',
+          rank: '信用指数排名',
+          lv5: { count: 600, perc: 10 },
+          lv4: { count: 500, perc: 12 },
+          lv3: { count: 400, perc: 13 },
+          lv2: { count: 300, perc: 14 },
+          lv1: { count: 200, perc: 15 },
+          lv0: { count: 100, perc: 16 }
+        },
+        lvData: {
+          lv0: { count: 1, percent: .01 },
+          lv1: { count: 2, percent: .02 },
+          lv2: { count: 3, percent: .03 },
+          lv3: { count: 4, percent: .04 },
+          lv4: { count: 90, percent: .9 },
+          lv5: { count: 9900, percent: 99 }
+        },
+
+        cunBtnType: '数量',
+        cunColumns: [
+          { title: '类别/星级', key: 'type', align: 'center', tooltip: true, className: 'table-name', width: 100 },
+          { title: '五星', key: 's5', align: 'center', tooltip: true, className: 'font12' },
+          { title: '四星', key: 's4', align: 'center', tooltip: true, className: 'font12' },
+          { title: '三星', key: 's3', align: 'center', tooltip: true, className: 'font12' },
+          { title: '二星', key: 's2', align: 'center', tooltip: true, className: 'font12' },
+          { title: '一星', key: 's1', align: 'center', tooltip: true, className: 'font12' },
+          { title: '零星', key: 's0', align: 'center', tooltip: true, className: 'font12' }
+        ],
+        cunData: [],
+        zhenData: [],
+        currentMap: { // 当前地图映射的镇街选点
+          name: '',
+          rank: 0,
+          total: 0,
+          value: 0,
+          count: 0,
+          data: 0,
+          s5: '五星人数 + 占比',
+          s4: '四星人数 + 占比',
+          s3: '三星人数 + 占比',
+          s2: '二星人数 + 占比',
+          s1: '一星人数 + 占比',
+          s0: '零星人数 + 占比',
+          list: { // 7个月的数据
+            xData: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'], // 月份
+            numData: [], // 七月数据量
+            valData: [] // 七个月的信用指数
+          }
+        },// 镇街数据初始化
+        // new add
+        zrrRcTableData: {
+          // 结构如下
+          /*
+          zrrData:[
+            { lv: 'AAA', percent: "30%", count: 66666},
+            { lv: 'AA', percent: "20%", count: 55555},
+            { lv: 'A+', percent: "10%", count: 44444},
+            { lv: 'A', percent: "30%", count: 33333},
+            { lv: 'A-', percent: "20%", count: 22222},
+            { lv: 'B', percent: "10%", count: 11111},
+            { lv: 'C', percent: "30%", count: 66666},
+            { lv: 'D', percent: "20%", count: 66666},
+          ],
+          zrrColumns:[
+            {title:"信用等级",key:"lv",align:"center"},
+            {title:"占比",key:"percent",align:"center"},
+            {title:"入口",key:"count",align:"center"},
+          ],
+          titleOption:{
+            title:"市级信用情况"
+          },
+          topBarOption:{
+            imgUrl:"../images/add-icon3.png",
+            // imgUrl:"../images/icon3.png",
+            name:"自然人等级分布",
+            msg:"人口数：9999999"
+          }
+          */
+        },
+        qyRcTableData: {
+          // 结构如下
+          /*
+          zrrData:[
+            { lv: 'AAA', percent: "30%", count: 66666},
+            { lv: 'AA', percent: "20%", count: 55555},
+            { lv: 'A+', percent: "10%", count: 44444},
+            { lv: 'A', percent: "30%", count: 33333},
+            { lv: 'A-', percent: "20%", count: 22222},
+            { lv: 'B', percent: "10%", count: 11111},
+            { lv: 'C', percent: "30%", count: 66666},
+            { lv: 'D', percent: "20%", count: 66666},
+          ],
+          zrrColumns:[
+            {title:"信用等级",key:"lv",align:"center"},
+            {title:"占比",key:"percent",align:"center"},
+            {title:"入口",key:"count",align:"center"},
+          ],
+          titleOption:{
+            title:""
+          },
+          topBarOption:{
+            // imgUrl:"../images/add-icon3.png",
+            imgUrl:"../images/icon3.png",
+            name:"企业等级分布",
+            msg:"人口数：8888888"
+          }
+          */
+        },
+        cityCreditLv: {},
+        townCreditLv: {},
+        city: {},
+        town: {},
+        ctPercentTown: {},
+        ctPercentCity: {},
+        townFundAnalyze: {},
+        cityFundAnalyze: {},
+        currentTown: '港西镇'
+      }
+    },
+    created () {
+      this.getData()
+    },
+    mounted () {
+      this.getMapData()
+    },
+    computed: {
+      zhenDataTop9: function () {
+        return this.zhenData.length > 0 ? this.zhenData.slice(0, 9) : []
+      },
+      persCount () {
+        var arr = this.persData.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      },
+      comsCount () {
+        var arr = this.comsData.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      }
+    },
+    watch: {
+      currentTown: (n, o) => {
+        // n拼进请求地址中
+        axios.get('/town').then(function (res) {
+          var _self = this
+          console.log(res)
+          // 本地data变动,会自动重新渲染切换
+          // _self.town = res.xxx
+          // _self.ctPercentTown = res.xxx
+          // _self.qyRcTableData = res.xxx
+          // _self.zrrRcTableData = res.xxx
+          // _self.city = res.xxx
+          // _self.town = res.xxx
+        })
+      },
+      // 同步城市乡镇折线图
+      city: (n, o) => {
+        vm.renderCTLineChart('cityLineChart', n)
+      },
+      town: (n, o) => {
+        vm.renderCTLineChart('townLineChart', n)
+      },
+      ctPercentCity: (n, o) => {
+        vm.renderDoubleRingChart('cityDoubleRingChartL', n.percent, 0, n.title)
+        vm.renderDoubleRingChart('cityDoubleRingChartR', n.count, 1, n.title)
+      },
+      ctPercentTown: (n, o) => {
+        vm.renderDoubleRingChart('townDoubleRingChartL', n.percent, 0, n.title)
+        vm.renderDoubleRingChart('townDoubleRingChartR', n.count, 1, n.title)
+      },
+      checkedCities1: (n, o) => {
+        if (n.length > 2) {
+          vm.checkedCities1.shift()
+        }
+      },
+      selects1: (n) => {
+        var _self = this
+        axios.post('/compareData', { list: n })
+          .then(function (res) {
+            vm.select1Data = res.data
+          })
+      },
+      checkedCities2: (n, o) => {
+        if (n.length > 2) {
+          vm.checkedCities2.shift()
+        }
+      },
+      selects2: (n) => {
+        var _self = this
+        axios.post('/compareData', { list: n })
+          .then(function (res) {
+            vm.select2Data = res.data
+          })
+      }
+    },
+    methods: {
+      showModal: function (str) {
+        this.select1 = false
+        this.select2 = false
+        this.more = false
+        this[str] = true
+      },
+      // 取消 a:value,b:index,i:from click;
+      // 判断点击的i对应遍历内容与选中存储器中各项是否相同，并删除相同项
+      del: function (i, j) {
+        this['selects' + j].forEach((a, b) => {
+          if ((this['countries' + j])[i] === a) {
+            this['selects' + j].splice(b, 1)
+          }
+        })
+      },
+      // 选择，可选择条件：（选中项少于两条时，直接压入；点击内容与选中项不同，）
+      handleSelect: function (item, j) {
+        if (this['selects' + j].length < 2 && this['selects' + j][0] !== item) {
+          this['selects' + j].push(item)
+        }
+        if ((this['selects' + j])[0] !== item && this['selects' + j][1] !== item) {
+          this['selects' + j].shift()
+          this['selects' + j].push(item)
+        }
+      },
+      // 获取数据(初始数据)
+      getData: function () {
+        var _self = this
+        axios.get('/getCountriesData').then(function (res) {
+          _self.countriesData.comsData = res.data.coms
+          _self.countriesData.persData = res.data.pers
+        })
+        axios.post('/compareData', { list: _self.selects1 })
+          .then(function (res) {
+            _self.select1Data = res.data
+          })
+        // 获取对比数据
+        axios.post('/compareData', { list: _self.selects2 })
+          .then(function (res) {
+            _self.select2Data = res.data
+          })
+        //获取分析数据
+        axios.get('/getAnalyzeData').then(function (res) {
+          _self.analyzeVal = res.data.analyzeVal
+        })
+        axios.get('/cunShuliang').then(function (res) {
+          _self.cunData = res.data.list
+        })
+        axios.get('/creditTrend').then(function (res) {
+          _self.city = res.data.data.city
+          _self.town = res.data.data.town
+        })
+        axios.get('/rcTableData').then(function (res) {
+          _self.zrrRcTableData = res.data.data.zrrRcTableData
+          _self.qyRcTableData = res.data.data.qyRcTableData
+        })
+        axios.get('/ctPercentData').then(function (res) {
+          _self.ctPercentCity = res.data.data.city
+          _self.ctPercentTown = res.data.data.town
+        })
+        axios.get('/creditLv').then(function (res) {
+          _self.cityCreditLv = res.data.data.cityCreditLvTableData
+          _self.townCreditLv = res.data.data.townCreditLvTableData
+          _self.townFundAnalyze = res.data.data.townFundAnalyzeTableData
+          _self.cityFundAnalyze = res.data.data.cityFundAnalyzeTableData
+        })
+      },
+      handleLineChart: function (row) {
+        this.renderlineChart(row.chartData)
+      },
+      renderlineChart: function (series) {
+        var myChart = echarts.init(document.getElementById('lineChart'))
+        var option = {
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            icon: 'rect',
+            bottom: 10,
+            textStyle: {
+              color: '#7893ad'
+            },
+            data: ['数据量', '平均分']
+          },
+          color: ['#d20f60', '#3f5ee4', '#ffea68', '#1bd5c0'],
+          grid: {
+            left: 50,
+            top: 40,
+            right: 0,
+            width: 400,
+            bottom: 60
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: { color: '#8fa0cd' }
+            },
+            splitLine: {
+              show: true,
+              lineStyle: { color: '#141e3e' }
+            },
+            type: 'category',
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: {
+              show: true,
+              lineStyle: { color: '#8fa0cd' }
+            },
+            splitLine: {
+              show: true,
+              lineStyle: { color: '#141e3e' }
+            }
+          },
+          series: series
+        }
+        myChart.setOption(option)
+      },
+      toggleCunData: function (type) {
+        this.cunBtnType = type
+        var _self = this
+        var url = type === '占比' ? '/cunZhanbi' : '/cunShuliang'
+        axios.get(url).then(function (res) {
+          _self.cunData = res.data.list
+        })
+      },
+      // 指标项分布
+      renderRing: function () {
+        var myChart = echarts.init(document.getElementById('ringChart'))
+
+        var m2R2Data = [
+          { value: 335, legendName: '村居管理01', name: '种类01  335' },
+          { value: 310, legendName: '村居管理02', name: '种类02  310' },
+          { value: 234, legendName: '村居管理03', name: '种类03  234' },
+          { value: 154, legendName: '村居管理04', name: '种类04  154' },
+          { value: 335, legendName: '村居管理05', name: '种类05  335' },
+          { value: 335, legendName: '村居管理06', name: '种类06  335' },
+          { value: 335, legendName: '社会公益07', name: '种类07  335' },
+          { value: 335, legendName: '社会公益08', name: '种类08  335' },
+          { value: 335, legendName: '社会公益09', name: '种类09  335' },
+          { value: 335, legendName: '社会公益10', name: '种类10  335' },
+          { value: 335, legendName: '社会公益09', name: '种类11  335' },
+          { value: 335, legendName: '社会公益10', name: '种类12  335' }
+        ]
+        var option = {
+          title: {
+            text: '指标项分布',
+            textStyle: {
+              color: '#fff'
+            },
+            textAlign: 'center',
+            left: '50%'
+          },
+          grid: {
+            containLabel: true
+          },
+          color: ['#01c9fd', '#ff8f5f', '#6ec26e', '#fc5976',
+            '#ae74f3', '#ff7391', '#ffb759', '#4c83ff',
+            '#60daab', '#fffd08', '#467aff', '#ff7ab7'],
+          tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+              var str = params.seriesName + '</br>' +
+                params.marker + '' + params.data.legendName + '</br>' +
+                '数量：' + params.data.value + '</br>' +
+                '占比：' + params.percent + '%'
+              return str
+            }
+          },
+          legend: { show: false },
+          series: [
+            {
+              name: '标题',
+              type: 'pie',
+
+              clockwise: false, //饼图的扇区是否是顺时针排布
+              avoidLabelOverlap: false,
+              label: {
+                normal: {
+                  show: true,
+                  formatter: function (params) {
+                    return params.data.legendName
+                  }
+                }
+              },
+              labelLine: {
+                normal: {
+                  length: 12,
+                  length2: 3
+                }
+              },
+              data: m2R2Data
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+
+      // 市镇趋势双折线
+      renderCTLineChart: function (id, data) {
+        var myChart = echarts.init(document.getElementById(id))
+        var option = {
+          color: ['#fc5976', '#4b83ff'],
+          title: {
+            textStyle: {
+              color: '#fff',
+              fontSize: 20
+            },
+            left: 'center'
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            data: ['正面', '负面'],
+            left: 'right',
+            top: 30,
+            icon: 'rect',
+            textStyle: {
+              color: '#fff'
+            }
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: ['20%', '20%'],
+            axisLine: {
+              lineStyle: {
+                color: '#fff'
+              }
+            },
+            data: ['2014年', '2015年', '2016年', '2017年', '2018年', '2019年']
+          },
+          yAxis: [
+            {
+              type: 'value',
+              axisLine: {
+                lineStyle: {
+                  color: '#fff'
+                }
+              }
+            }
+          ],
+          series: [
+            {
+              name: '正面',
+              type: 'line',
+              stack: '总量',
+              data: data.count
+            },
+            {
+              name: '负面',
+              type: 'line',
+              stack: '总量',
+              data: data.average
+            }
+          ]
+        }
+        id !== 'townLineChart' ? option.title.text = '市级信用指数及数据量趋势分析' : option.title.text = vm.currentTown + '信用指数及数据量趋势分析'
+        myChart.setOption(option)
+      },
+      // 双环图
+      renderDoubleRingChart: function (id, data, i, title) {
+        var myChart = echarts.init(document.getElementById(id))
+        var colors = {
+          0: ['#393f44', '#fc5976'],
+          1: ['#4c82fe', '#5fd9aa', '#FEE967', '#00C8FC', '#FE8E5E', '#6FC36F', '#FC5976', '#AE74F3', '#FE7290']
+        }
+        var formatter = i === 0 ? '{b}' + '\n' + '{d}' + '%' : '{b}:{c}'
+        var option = {
+          title: {
+            text: title.text[i],
+            subtext: title.subtext[i],
+            left: '48%',
+            top: 140,
+            textStyle: { color: '#fff', fontSize: 12 },
+            textVerticalAlign: 'center',
+            textAlign: 'center'
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+          },
+          grid: {
+            containLabel: true
+          },
+          label: {
+            formatter: formatter,
+            color: '#fff'
+          },
+          series: [
+            {
+              name: '访问来源',
+              type: 'pie',
+              radius: [30, 60],
+              center: ['50%', '60%'],
+              data: data,
+              itemStyle: {
+                emphasis: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        }
+        option.color = colors[i]
+        myChart.setOption(option)
+      },
+
+      renderMap: function () {
+        var _self = this
+        this.mapChart = echarts.init(document.getElementById('rcMapChart'))
+        // 指定图表的配置项和数据
+        this.mapChart.on('click', function (params) {
+          _self.currentTown = params.name
+          // 逻辑控制
+        })
+        var cData = convertData(_self.zhenData)
+
+        var option = {
+          tooltip: {
+            trigger: 'item',
+            formatter: function (param) {
+              return '<p style="font-size: 20px">' + param.data.name + '</p>'
+                + '<br>人口总数：' + param.data.row.total
+                + '<br><p style="color: #00d7ff">信用指数：' + param.data.row.value + '</p>'
+                + '五星：' + param.data.row.s0
+                + '<br>四星：' + param.data.row.s1
+                + '<br>三星：' + param.data.row.s2
+                + '<br>二星：' + param.data.row.s3
+                + '<br>一星：' + param.data.row.s4
+            },
+            backgroundColor: 'rgba(19,33,63,0.9);',
+            padding: 20
+          },
+          bmap: {
+            center: [122.409906, 37.19394],
+            zoom: 11,
+            roam: false,
+            mapStyle: {
+              'styleJson': [
+                {
+                  'featureType': 'water',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#031628'
+                  }
+                },
+                {
+                  'featureType': 'land',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#08304a'
+                  }
+                },
+                {
+                  'featureType': 'highway',
+                  'elementType': 'all',
+                  'stylers': {
+                    'visibility': 'off'
+                  }
+                },
+                {
+                  'featureType': 'arterial',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'arterial',
+                  'elementType': 'geometry.stroke',
+                  'stylers': {
+                    'color': '#0b3d51'
+                  }
+                },
+                {
+                  'featureType': 'local',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'railway',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'railway',
+                  'elementType': 'geometry.stroke',
+                  'stylers': {
+                    'color': '#08304b'
+                  }
+                },
+                {
+                  'featureType': 'subway',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'lightness': -70
+                  }
+                },
+                {
+                  'featureType': 'building',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'all',
+                  'elementType': 'labels.text.fill',
+                  'stylers': {
+                    'color': '#857f7f'
+                  }
+                },
+                {
+                  'featureType': 'all',
+                  'elementType': 'labels.text.stroke',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'building',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#022338'
+                  }
+                },
+                {
+                  'featureType': 'green',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#062032'
+                  }
+                },
+                {
+                  'featureType': 'boundary',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#465b6c'
+                  }
+                },
+                {
+                  'featureType': 'manmade',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#022338'
+                  }
+                },
+                {
+                  'featureType': 'label',
+                  'elementType': 'all',
+                  'stylers': {
+                    'visibility': 'off'
+                  }
+                }
+              ]
+            }
+          },
+          series: [
+            {
+              type: 'effectScatter',
+              coordinateSystem: 'bmap',
+              showEffectOn: 'render',
+              symbolSize: function (v) { // 标准大小
+                return 15 + v[0] / 2500
+              },
+              rippleEffect: {
+                brushType: 'stroke',
+                scale: 3
+              },
+              label: {
+                normal: {
+                  formatter: '{b}',
+                  position: 'top',
+                  show: true
+                }
+              },
+              itemStyle: {
+                color: '#2ed7ff'
+              },
+              data: cData
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        this.mapChart.setOption(option)
+        // this.mapChart.on('click', function (params) {
+        //   // 深拷贝当前选中行
+        //   _self.zhenRowClick(params.data.row)
+        // })
+      },
+      getMapData: function () {
+        var _self = this
+        axios.get('/getMapData').then(function (res) {
+          _self.zhenData = res.data.data
+          _self.renderMap()
+        })
+      }
+    }
+  })
+</script>
+</body>
+</html>

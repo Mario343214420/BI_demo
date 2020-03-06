@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>荣成市专项应用分析</title>
+  <!--required-->
+  <!--核心库、动画库、请求库-->
+  <script src="../js/lib/vue.min.js"></script>
+  <script src="../js/lib/utils/axios.min.js"></script>
+  <!--required end-->
+  <!--第三方库和自己编写的插件-->
+  <!--bin-ui-->
+  <link rel="stylesheet" href="../js/lib/bin-ui/styles/index.css">
+  <script src="../js/lib/bin-ui/bin-ui.umd.min.js"></script>
+  <!--charts-->
+  <script src="../js/lib/echarts/echarts.min.js"></script>
+  <script src="../js/lib/echarts/extension/bmap.min.js"></script>
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mf9v9D2wro0QuBfsuhPl8wltrwcFSZqX"></script>
+  <!--self-->
+  <link rel="stylesheet" href="../styles/index3.css">
+  <style>
+    #rcMapChart {
+      transform: scale(1.4) translate(-104px, -66px);
+    }
+
+    .over-hidden {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <!--<b-scrollbar style="height:100%;">-->
+  <div class="screen-wrapper">
+    <v-header label="荣成市专项应用分析">
+      <a href="index.html">全市信用综合分析平台</a>
+      <a href="index2.html">重点人群重点行业分析</a>
+      <a href="index3.html" class="active">专项应用分析</a>
+    </v-header>
+    <div class="main">
+      <v-block label="联合奖惩分析平台" :rect="[40,20,1880,944]">
+        <div flex="main:justify" style="height:425px;margin-bottom: 10px;">
+          <div class="block3-1 dipan">
+            <div class="top-h2">联合奖惩基本情况</div>
+            <div class="border">
+              <div class="mb5">
+                <div class="item w33 blue2">
+                  <img src="../images/icon1.png" alt="icon1"/>
+                  <p class="">奖惩方案总数</p>
+                  <p class="font20">38条</p>
+                </div>
+                <div class="item w33" style="background-color: #182547;">
+                  <p class="font20 blue2">12条</p>
+                  <p>激励</p>
+                </div>
+                <div class="item w33" style="background-color: #182547;">
+                  <p class="font20 blue2">26条</p>
+                  <p>惩戒</p>
+                </div>
+              </div>
+              <div class="chart" flex="box:mean">
+                <div class="t-center">
+                  <b-circle :percent="70" :size="80" stroke-color="#0F36AC" trail-color="#394760">
+                    <p>奖惩措施</p>
+                    <span class="font24">318</span>条
+                  </b-circle>
+                  <p flex="box:mean">
+                    <span><i style="background-color: #0f36ac;"></i>激励:216</span>
+                    <span><i></i>惩戒:102</span>
+                  </p>
+                </div>
+                <div class="t-center">
+                  <b-circle :percent="55" :size="80" stroke-color="#FFC426" trail-color="#394760">
+                    <p>奖惩措施</p>
+                    <span class="font24">238</span>条
+                  </b-circle>
+                  <p flex="box:mean">
+                    <span><i style="background-color: #ffc426;"></i>激励:216</span>
+                    <span><i></i>惩戒:102</span>
+                  </p>
+                </div>
+              </div>
+              <div class="chart" flex="box:mean">
+                <div class="t-center">
+                  <b-circle :percent="37" :size="80" stroke-color="#E55278" trail-color="#394760">
+                    <p>奖惩措施</p>
+                    <span class="font24">338</span>条
+                  </b-circle>
+                  <p flex="box:mean">
+                    <span><i style="background-color: #e55278;"></i>激励:216</span>
+                    <span><i></i>惩戒:102</span>
+                  </p>
+                </div>
+                <div class="t-center">
+                  <b-circle :percent="43" :size="80" stroke-color="#0B87ED" trail-color="#394760">
+                    <p>奖惩措施</p>
+                    <span class="font24">212</span>条
+                  </b-circle>
+                  <p flex="box:mean">
+                    <span><i style="background-color: #0b87ed;"></i>激励:216</span>
+                    <span><i></i>惩戒:102</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="block3-2 dipan">
+            <div class="top-h2">部门奖惩措施数据统计
+              <span @click="showDeptModal">更多</span>
+            </div>
+            <b-table :columns="deptNumColumns" :data="deptNumData.slice(0,6)" border disabled-hover></b-table>
+          </div>
+          <div class="block3-3 dipan">
+            <div class="top-h2 no-bg">红黑名单联合查询/执行次数统计</div>
+            <div id="deptChart" style="width:400px; height:330px;"></div>
+          </div>
+          <div class="block3-4 dipan">
+            <div class="top-h2 no-bg">黑名单退出趋势</div>
+            <div id="blackChart" style="width:380px; height:340px;"></div>
+          </div>
+        </div>
+        <div flex="main:justify" style="height:435px;">
+          <div class="block3-5">
+            <div class="top-h2 big">红名单列表
+              <span @click="showRedModal" style="right:10px;">更多</span>
+            </div>
+            <div>
+              <b-table :columns="[
+                { title: '名单名称', slot: 'name',width:350},
+                { title: '名单数量', key: 'num', align: 'center' },
+              ]" :data="redData.slice(0,7)" border disabled-hover>
+                <template v-slot:name="scope">
+                  <span style="color:#e06189">{{scope.row.name}}</span>
+                </template>
+              </b-table>
+            </div>
+
+            <!--            备忘录列表改为红名单列表-->
+            <!--
+            <div class="top-h2 big">备忘录列表
+              <span v-if="memoBtnType==='激励'" @click="toggleMemoData('惩戒')" style="right:70px;">惩戒</span>
+              <span v-else @click="toggleMemoData('激励')" style="right:70px;">激励</span>
+              <span @click="showMemoModal" style="right:10px;">更多</span></div>
+            <b-table :columns="memoColumns" :data="memoData.slice(0,7)" border disabled-hover>
+              <template v-slot:nature="scope">
+
+                <span :style="{color:scope.row.nature==='激励'?'#e06189':'#61a1e2'}">
+                  {{scope.row.nature}}
+                </span>
+              </template>
+            </b-table>
+            -->
+          </div>
+          <div class="block3-6">
+            <div class="top-h2 big">黑名单列表
+              <!--              <span v-if="redBlackType==='黑名单'" style="right:70px;">黑名单</span>-->
+              <!--              <span v-else @click="toggleRedData('红名单')" style="right:70px;">红名单</span>-->
+              <span @click="showBlackModal" style="right:10px;">更多</span>
+            </div>
+            <div>
+              <b-table :columns="[
+                { title: '名单名称', slot: 'name',width:350},
+                { title: '名单数量', key: 'num', align: 'center' },
+              ]" :data="blackData.slice(0,7)" border disabled-hover>
+                <template v-slot:name="scope">
+                  <span style="color:#0cf">{{scope.row.name}}</span>
+                </template>
+              </b-table>
+            </div>
+          </div>
+          <div class="block3-7">
+            <div class="top-h2 big">多部门惩戒案例 (企业)
+              <span @click="showQyJcModal" style="right:50px;">更多</span>
+            </div>
+            <b-table :columns="jcQyColumns" :data="jcQyData" border disabled-hover>
+              <template v-slot:comp="scope">
+                <span class="blue2 pointer t-ellipsis" @click="showQyJcDetail(scope.row)"
+                      style="display:block;width: 100%;height:100%;">
+                  <b-icon name="doubleright"></b-icon>
+                  {{ scope.row.comp }}
+                </span>
+              </template>
+            </b-table>
+          </div>
+          <div class="block3-8">
+            <div class="top-h2 big">多部门惩戒案例 (个人)
+              <span @click="showGrJcModal" style="right:50px;">更多</span>
+            </div>
+            <b-table :columns="jcGrColumns" :data="jcGrData" border disabled-hover>
+              <template v-slot:name="scope">
+                <span class="blue2 pointer t-ellipsis" @click="showGrJcDetail(scope.row)">
+                  <b-icon name="doubleright"></b-icon>
+                  {{ scope.row.name }}
+                </span>
+              </template>
+            </b-table>
+          </div>
+        </div>
+      </v-block>
+      <v-block label="村居信用专项分析平台" :rect="[1940,20,1880,944]">
+        <!--农村信用等级规划及对应分值-->
+        <v-full-block :rect="[20,60,445,425]">
+          <div class="block3-9 dipan">
+            <div class="top" flex="box:mean">
+              <span><img class="street-icon" src="../images/icon-streets.png">镇街数量：28</span>
+              <span><img class="street-icon" src="../images/icon-country.png">村居数量：299</span>
+              <span><img class="street-icon" src="../images/icon-pers.png">村居人口：6666</span>
+            </div>
+            <div class="top-h2 no-bg">农村信用等级规划及对应分值</div>
+            <div class="base-core">基础分</div>
+            <div class="base-core-line" style="top:144px;">1060</div>
+            <div class="base-core-line" style="top:188px;">1040</div>
+            <div class="base-core-line" style="top:232px;">1020</div>
+            <div class="base-core-line" style="color: #fff">1000</div>
+            <div class="base-core-line" style="top:320px;">990</div>
+            <div class="base-core-line" style="top:364px;">800</div>
+            <div class="block-level">
+              <ul class="level-container">
+                <li>
+                  <div>五星</div>
+                  <div>
+                    <b-rate :value="5" disabled disabled-void-color="#3d475d"
+                            :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                  </div>
+                  <div class="count">{{lvData.lv5.count}}人</div>
+                  <div class="perc">{{lvData.lv5.percent}}%</div>
+                </li>
+                <li>
+                  <div>四星</div>
+                  <div>
+                    <b-rate :value="4" disabled disabled-void-color="#3d475d"
+                            :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                  </div>
+                  <div class="count">{{lvData.lv4.count}}人</div>
+                  <div class="perc">{{lvData.lv4.percent}}%</div>
+                </li>
+                <li>
+                  <div>三星</div>
+                  <div>
+                    <b-rate :value="3" disabled disabled-void-color="#3d475d"
+                            :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                  </div>
+                  <div class="count">{{lvData.lv3.count}}人</div>
+                  <div class="perc">{{lvData.lv3.percent}}%</div>
+                </li>
+                <li>
+                  <div>二星</div>
+                  <div>
+                    <b-rate :value="2" disabled disabled-void-color="#3d475d"
+                            :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                  </div>
+                  <div class="count">{{lvData.lv2.count}}人</div>
+                  <div class="perc">{{lvData.lv2.percent}}%</div>
+                </li>
+                <li>
+                  <div>一星</div>
+                  <div>
+                    <b-rate :value="1" disabled disabled-void-color="#3d475d"
+                            :colors="['#f03f58', '#f03f58', '#f03f58']"></b-rate>
+                  </div>
+                  <div class="count">{{lvData.lv1.count}}人</div>
+                  <div class="perc">{{lvData.lv1.percent}}%</div>
+                </li>
+                <li>
+                  <div>零星</div>
+                  <div style="padding-top: 7px;"><img style="width: 18px;" src="../images/star-black.png" alt="black"/></div>
+                  <div class="count">{{lvData.lv0.count}}人</div>
+                  <div class="perc">{{lvData.lv0.percent}}%</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </v-full-block>
+        <!--指标项分布-->
+        <v-full-block :rect="[20,500,445,425]">
+          <div class="block3-10 dipan">
+            <div class="top-h2 no-bg">指标项分布</div>
+            <div id="ringChart" style="width: 440px;height:350px;"></div>
+          </div>
+        </v-full-block>
+        <!--镇街信用基本情况-->
+        <v-full-block :rect="[1410,60,445,520]">
+          <div class="block3-11">
+            <h2>当前镇街信用基本情况
+              <span @click="zhenMoreModal=true">更多</span>
+            </h2>
+            <b-table class="table-highlight" :columns="zhenColumns" :data="zhenDataTop9"
+                     border highlight-row @on-current-change="zhenRowClick"></b-table>
+            </b-table>
+          </div>
+        </v-full-block>
+        <!--村居重点人群信用等级分布情况-->
+        <v-full-block :rect="[1410,630,445,330]">
+          <div class="block3-11">
+            <h2>村居重点人群信用等级分布情况
+              <span v-if="cunBtnType==='数量'" @click="toggleCunData('占比')">占比</span>
+              <span v-else @click="toggleCunData('数量')">数量</span>
+            </h2>
+            <b-table :columns="cunColumns" :data="cunData" border disabled-hover></b-table>
+          </div>
+        </v-full-block>
+        <!--荣成地图-->
+        <v-full-block :rect="[475,60,925,864]" class="over-hidden">
+          <div id="rcMapChart" style="width: 925px;height:864px;"></div>
+        </v-full-block>
+        <!--地图及右侧表格选点后弹出内容-->
+        <transition name="zoom-in-bottom">
+          <v-full-block :rect="[475,544,925,380]" v-show="mapPointModal">
+            <div class="map-block">
+              <h2>{{ currentMap.name }}信用指数及数据量趋势分析</h2>
+              <i class="iconfont icon-ios-close" @click="mapPointModal=false"></i>
+              <div class="chart" flex>
+                <div class="left">
+                  <p><span>名称：</span><span>{{ currentMap.name }}</span></p>
+                  <p><span>排名：</span><span>{{ currentMap.rank }}</span></p>
+                  <p><span>五星：</span><span>{{ currentMap.s5 }}</span></p>
+                  <p><span>四星：</span><span>{{ currentMap.s4 }}</span></p>
+                  <p><span>三星：</span><span>{{ currentMap.s3 }}</span></p>
+                  <p><span>二星：</span><span>{{ currentMap.s2 }}</span></p>
+                  <p><span>一星：</span><span>{{ currentMap.s1 }}</span></p>
+                  <p><span>零星：</span><span>{{ currentMap.s0 }}</span></p>
+                </div>
+                <div class="right" flex-box="1">
+                  <div id="mapPointChart" style="width: 620px;height: 320px;"></div>
+                </div>
+              </div>
+            </div>
+          </v-full-block>
+        </transition>
+      </v-block>
+      <!--各种弹窗-->
+      <v-modal :rect="[528,70,445,875]" label="部门奖惩措施数据统计"
+               v-model="deptNumModal" transition-name="fade-scale-move">
+        <b-table :columns="deptNumColumns" :data="deptNumData" border disabled-hover
+                 style="margin-right: 15px;"></b-table>
+      </v-modal>
+
+      <!--      提出备忘录列表改为红名单-->
+      <!--
+      <v-modal :rect="[64,70,445,875]" label="备忘录列表"
+               v-model="memoModal" transition-name="fade-scale-move">
+        <b-table :columns="memoColumns" :data="memoData" border disabled-hover
+                 style="margin-right: 15px;">
+          <template v-slot:nature="scope">
+            <span :style="{color:scope.row.nature==='激励'?'#e06189':'#61a1e2'}">
+                  {{scope.row.nature}}
+                </span>
+          </template>
+        </b-table>
+      </v-modal>
+      -->
+
+      <v-modal :rect="[60,70,445,875]" label="红名单列表"
+               v-model="redModal" transition-name="fade-scale-move">
+        <b-table :columns="[
+                { title: '名单名称', slot: 'name',width:350},
+                { title: '名单数量', key: 'num', align: 'center' },
+              ]" :data="redData" border disabled-hover
+                 style="margin-right: 15px;">
+          <template v-slot:name="scope">
+            <span style="color:#e06189;">{{scope.row.name}}</span>
+          </template>
+        </b-table>
+      </v-modal>
+      <v-modal :rect="[528,70,445,875]" label="黑名单列表"
+               v-model="blackModal" transition-name="fade-scale-move">
+        <b-table :columns="[
+                { title: '名单名称', slot: 'name',width:350},
+                { title: '名单数量', key: 'num', align: 'center' },
+              ]" :data="blackData" border disabled-hover
+                 style="margin-right: 15px;">
+          <template v-slot:name="scope">
+            <span style="color:#0cf;">{{scope.row.name}}</span>
+          </template>
+        </b-table>
+      </v-modal>
+      <v-modal :rect="[992,70,445,875]" label="多部门惩戒案例 (企业)"
+               v-model="qyJcModal" transition-name="fade-scale-move">
+        <b-table :columns="jcQyColumns" :data="jcQyData" border disabled-hover style="margin-right: 15px;">
+          <template v-slot:comp="scope">
+            <span class="blue2 pointer t-ellipsis" @click="showQyJcDetail(scope.row)"
+                  style="display:block;width: 100%;height:100%;">
+              <b-icon name="doubleright"></b-icon>
+              {{ scope.row.comp }}
+            </span>
+          </template>
+        </b-table>
+      </v-modal>
+      <!--企业的措施详情-->
+      <v-modal :rect="[1450,526,445,420]" label="执行详情"
+               v-model="qyJcContentModal" transition-name="fade-scale-move">
+        <h2 class="blue2 mb10">企业名称：{{currentRowName}}</h2>
+        <b-table :columns="[
+                { title: '措施内容', key: 'content'},
+                { title: '执行部门', key: 'dept', align: 'center' },
+              ]" :data="jcQyContentData" border disabled-hover
+                 style="margin-right: 15px;">
+        </b-table>
+      </v-modal>
+      <v-modal :rect="[1456,70,445,875]" label="多部门惩戒案例 (个人)"
+               v-model="grJcModal" transition-name="fade-scale-move">
+        <b-table :columns="jcGrColumns" :data="jcGrData" border disabled-hover style="margin-right: 15px;">
+          <template v-slot:name="scope">
+            <span class="blue2 pointer" @click="showGrJcDetail(scope.row)">
+              <b-icon name="doubleright"></b-icon>
+              {{ scope.row.name }}
+            </span>
+          </template>
+        </b-table>
+      </v-modal>
+      <!--个人措施详情-->
+      <v-modal :rect="[990,526,445,420]" label="执行详情"
+               v-model="grJcContentModal" transition-name="fade-scale-move">
+        <h2 class="blue2 mb10">姓名：{{currentRowName}}</h2>
+        <b-table :columns="[
+                { title: '措施内容', key: 'content'},
+                { title: '执行部门', key: 'dept', align: 'center' },
+              ]" :data="jcGrContentData" border disabled-hover
+                 style="margin-right: 15px;">
+        </b-table>
+      </v-modal>
+      <!--镇街信用基本情况-->
+      <v-modal :rect="[3352,60,450,884]" label="当前镇街信用基本情况"
+               v-model="zhenMoreModal" transition-name="zoom-in-top">
+        <div class="block3-11" style="margin-right: 15px;">
+          <b-table class="table-highlight" :columns="zhenColumns" :data="zhenData"
+                   border highlight-row @on-current-change="zhenRowClick"></b-table>
+        </div>
+      </v-modal>
+    </div>
+  </div>
+  <!--</b-scrollbar>-->
+</div>
+<script src="../js/components/v-header.js"></script>
+<script src="../js/components/v-block.js"></script>
+<script src="../js/components/v-full-block.js"></script>
+<script src="../js/components/v-chart-bar.js"></script>
+<script src="../js/components/v-modal.js"></script>
+<!--荣成的数据标志-->
+<script src="../js/lib/echarts/rcGeoCoord.js"></script>
+<!--测试模拟请求-->
+<script src="../js/lib/utils/mock.js"></script>
+<script src="../mock/mockIndex3.js"></script>
+<script>
+  var id = getBody(options);
+  var corp = [54800, 22486, 22486]
+  // 格式转换，把镇街数据转换为带坐标的数据
+  var convertData = function (data) {
+    var res = []
+    for (var i = 0; i < data.length; i++) {
+      var geoCoord = geoCoordMap[data[i].name]
+      if (geoCoord) {
+        res.push({
+          name: data[i].name,
+          value: geoCoord.concat(data[i].value),
+          row: data[i]
+        })
+      }
+    }
+    return res
+  }
+  // 简单处理深拷贝问题
+  var deepClone = function (obj) {
+    return JSON.parse(JSON.stringify(obj))
+  }
+  var vm = new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        //新添加数据，星级右侧显示人数百分比
+        lvData: {
+          lv0: {count: 1, percent: .01},
+          lv1: {count: 2, percent: .02},
+          lv2: {count: 3, percent: .03},
+          lv3: {count: 4, percent: .04},
+          lv4: {count: 90, percent: .9},
+          lv5: {count: 9900, percent: 99},
+        },
+        deptNumColumns: [
+          {title: '部门名称', key: 'dept', align: 'center'},
+          {title: '措施数量', key: 'num', align: 'center'}
+        ],
+        deptNumData: [
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888},
+          {dept: 'xxx发起部门', num: 8888}
+        ],
+        memoColumns: [
+          {title: '备忘录名称', key: 'name', align: 'center', tooltip: true},
+          {title: '发起部门', key: 'dept', align: 'center'},
+          {title: '性质', slot: 'nature', align: 'center', width: 80}
+        ],
+        memoData: [],
+        memoBtnType: '激励',
+        redBlackData: [],
+        //红黑名单数据
+        redData: [],
+        blackData: [],
+        redBlackType: '红名单',
+        jcQyColumns: [
+          {title: '企业名称', slot: 'comp'},
+          {title: '执行部门数', key: 'count', align: 'center', width: 100},
+          {title: '惩戒次数', key: 'total', align: 'center', width: 90}
+        ],
+        jcQyData: [
+          {comp: 'xxx有限公司', count: 5, total: 5},
+          {comp: 'xxx有限公司xxx有限公司xxx有限公司xxx有限公司xxx有限公司xxx有限公司xxx有限公司', count: 6, total: 7},
+          {comp: 'xxx有限公司', count: 4, total: 4},
+          {comp: 'xxx有限公司', count: 5, total: 5},
+          {comp: 'xxx有限公司', count: 2, total: 2},
+          {comp: 'xxx有限公司', count: 1, total: 1},
+          {comp: 'xxx有限公司', count: 3, total: 3}
+        ],
+        currentRowName: '',
+        jcQyContentData: [],
+        jcGrColumns: [
+          {title: '姓名', slot: 'name'},
+          {title: '执行部门数', key: 'count', align: 'center'},
+          {title: '惩戒次数', key: 'total', align: 'center'}
+        ],
+        jcGrData: [
+          // {name: '张三', count: 5, total: 5},
+          // {name: '郭小宁', count: 6, total: 7},
+          // {name: '李明', count: 4, total: 4},
+          // {name: '高校校', count: 5, total: 5},
+          // {name: '刘翔', count: 2, total: 2},
+          // {name: '白鹭', count: 1, total: 1},
+          // {name: '李白', count: 3, total: 3}
+        ],
+        jcGrContentData: [],
+        zhenColumns: [
+          {title: '排名', key: 'rank', align: 'center', width: 40},
+          {title: '镇街名称', key: 'name', align: 'center', width: 90, tooltip: true},
+          {title: '信用指数', key: 'value', align: 'center'},
+          {title: '人口', key: 'count', align: 'center', width: 70},
+          {title: '数据总量', key: 'total', align: 'center', width: 70},
+          {title: '百人数据量', key: 'data', align: 'center', width: 90}
+        ],
+        zhenData: [],
+        currentMap: { // 当前地图映射的镇街选点
+          name: '',
+          rank: 0,
+          total: 0,
+          value: 0,
+          count: 0,
+          data: 0,
+          s5: '五星人数 + 占比',
+          s4: '四星人数 + 占比',
+          s3: '三星人数 + 占比',
+          s2: '二星人数 + 占比',
+          s1: '一星人数 + 占比',
+          s0: '零星人数 + 占比',
+          list: { // 7个月的数据
+            xData: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'], // 月份
+            numData: [], // 七月数据量
+            valData: [] // 七个月的信用指数
+          }
+        },// 镇街数据初始化
+        mapPointModal: false,
+        cunColumns: [
+          {title: '类别/星级', key: 'type', align: 'center', tooltip: true, className: 'table-name', width: 100},
+          {title: '五星', key: 's5', align: 'center', tooltip: true, className: 'font12'},
+          {title: '四星', key: 's4', align: 'center', tooltip: true, className: 'font12'},
+          {title: '三星', key: 's3', align: 'center', tooltip: true, className: 'font12'},
+          {title: '二星', key: 's2', align: 'center', tooltip: true, className: 'font12'},
+          {title: '一星', key: 's1', align: 'center', tooltip: true, className: 'font12'},
+          {title: '零星', key: 's0', align: 'center', tooltip: true, className: 'font12'}
+        ],
+        cunData: [],
+        cunBtnType: '数量',
+        deptNumModal: false,
+        memoModal: false,
+        redBlackModal: false,
+        blackModal: false,
+        redModal: false,
+        qyJcModal: false,
+        qyJcContentModal: false,
+        grJcModal: false,
+        grJcContentModal: false,
+        zhenMoreModal: false
+      }
+    },
+    created: function () {
+      this.toggleMemoData(this.memoBtnType)
+      this.getRedData()
+      this.getBlackData()//获取红黑名单
+      //this.toggleRedData(this.redBlackType)
+      this.toggleCunData(this.cunBtnType)
+    },
+    mounted: function () {
+      this.renderDeptChart()
+      this.renderBlackChart()
+      this.renderRing()
+      this.getMapData()
+    },
+    computed: {
+      zhenDataTop9: function () {
+        return this.zhenData.length > 0 ? this.zhenData.slice(0, 9) : []
+      }
+    },
+    methods: {
+      toggleMemoData: function (type) {
+        this.memoBtnType = type
+        var _self = this
+        var url = type === '激励' ? '/memoJili' : '/memoChengjie'
+        axios.get(url).then(function (res) {
+          _self.memoData = res.data.data
+        })
+      },
+      // 部门查询统计
+      renderDeptChart: function () {
+        var myChart = echarts.init(document.getElementById('deptChart'))
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#0f36ac', '#0b87ed'],
+          legend: {
+            bottom: 0,
+            right: 0,
+            icon: 'rect',
+            itemWidth: 10,
+            itemHeight: 10,
+            textStyle: {
+              color: '#7893ad',
+              fontSize: 16,
+            }
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          //tooltip: false,
+          grid: {
+            top: 20,
+            left: 100,
+            bottom: 20
+          },
+          xAxis: {
+            show: false
+          },
+          yAxis: {
+            inverse: true,
+            axisLine: {
+              show: false
+            },
+            splitLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              color: '#8fa0cd',
+              fontSize: 16,
+              formatter: function (value) {
+                return (value.length > 5 ? (value.slice(0,5)+"...") : value )
+              },
+            },
+            data: ['部门名称部门名称1', '部门名称2', '部门名称3', '部门名称4', '部门名称5', '部门名称6', '部门名称7', '部门名称8']
+          },
+          series: [
+            {
+              name: '查询次数',
+              type: 'bar',
+              data: [1888, 1200, 1100, 1000, 910, 890, 780, 670],
+              barWidth: 10,
+              itemStyle: {
+                barBorderRadius: 10
+              },
+              label: {
+                show: true,
+                position: 'right',
+                color: '#fff',
+              }
+            },
+            {
+              name: '执行次数',
+              type: 'bar',
+              data: [223, 333, 456, 567, 634, 434, 256, 132],
+              barWidth: 10,
+              itemStyle: {
+                barBorderRadius: 10
+              },
+              label: {
+                show: true,
+                position: 'right',
+                color: '#fff'
+              }
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      // 黑名单退出趋势
+      renderBlackChart: function () {
+        var myChart = echarts.init(document.getElementById('blackChart'))
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#d20f60', '#0b87ed'],
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            top: 20,
+            right: 30,
+            icon: 'rect',
+            itemWidth: 10,
+            itemHeight: 10,
+            textStyle: {
+              color: '#8fa0cd'
+            }
+          },
+          grid: {
+            top: 50,
+            right: 30,
+            bottom: 40
+          },
+          xAxis: {
+            type: 'category',
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            axisLabel: {
+              color: '#8fa0cd'
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#222b45'}
+            },
+            data: ['1月', '2月', '3月', '4月', '5月', '6月']
+          },
+          yAxis: [
+            {
+              type: 'value',
+              splitNumber: 10,
+              axisTick: {
+                show: false
+              },
+              axisLabel: {
+                color: '#8fa0cd'
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {color: '#8fa0cd'}
+              },
+              splitLine: {
+                show: true,
+                lineStyle: {color: '#222b45'}
+              }
+            }
+          ],
+          series: [
+            {
+              lineStyle: {
+                width: 4
+              },
+              name: '个人',
+              type: 'line',
+              data: [10, 12, 18, 20, 22, 25],
+              label: {
+                show: true,
+                position: 'top'
+              }
+            },
+            {
+              lineStyle: {
+                width: 4
+              },
+              name: '企业',
+              type: 'line',
+              data: [4, 10, 20, 25, 26, 29],
+              label: {
+                show: true,
+                position: 'top'
+              }
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      toggleRedData: function (type) {
+        this.redBlackType = type
+        var _self = this
+        var url = type === '红名单' ? '/redList' : '/blackList'
+        axios.get(url).then(function (res) {
+          _self.redBlackData = res.data.data
+        })
+      },
+      //分别获取黑名单，红名单
+      getRedData: function () {
+        var _self = this
+        var url = '/redList'
+        axios.get(url).then(function (res) {
+          _self.redData = res.data.data
+        })
+      },
+      getBlackData: function () {
+        var _self = this
+        var url = '/blackList'
+        axios.get(url).then(function (res) {
+          _self.blackData = res.data.data
+        })
+      },
+      // 指标项分布
+      renderRing: function () {
+        var myChart = echarts.init(document.getElementById('ringChart'))
+        // 指定图表的配置项和数据
+        // var data = [
+        //   {
+        //     name: '父级指标1',
+        //     children: [
+        //       { name: '子指标1-1', value: 1 },
+        //       { name: '子指标1-2', value: 1 },
+        //       { name: '子指标1-3', value: 1 },
+        //       { name: '子指标1-4', value: 1 }
+        //     ]
+        //   },
+        //   {
+        //     name: '父级指标2',
+        //     children: [
+        //       { name: '子指标2-1', value: 1 },
+        //       { name: '子指标2-2', value: 1 },
+        //       { name: '子指标2-3', value: 1 },
+        //       { name: '子指标2-4', value: 1 }
+        //     ]
+        //   },
+        //   {
+        //     name: '父级指标3',
+        //     children: [
+        //       { name: '子指标3-1', value: 1 },
+        //       { name: '子指标3-2', value: 1 }
+        //     ]
+        //   },
+        //   {
+        //     name: '父级指标4',
+        //     children: [
+        //       { name: '子指标4-1', value: 1 },
+        //       { name: '子指标4-2', value: 1 },
+        //       { name: '子指标4-3', value: 1 }
+        //     ]
+        //   },
+        //   {
+        //     name: '父级指标5',
+        //     children: [
+        //       { name: '子指标5-1', value: 1 },
+        //       { name: '子指标5-2', value: 1 },
+        //       { name: '子指标5-3', value: 1 },
+        //       { name: '子指标5-4', value: 1 },
+        //       { name: '子指标5-5', value: 1 },
+        //       { name: '子指标5-6', value: 1 }
+        //     ]
+        //   }
+        // ]
+        //
+        // var option = {
+        //   color: ['#01c9fd', '#ff8f5f', '#6ec26e', '#fc5976',
+        //     '#ae74f3', '#ff7391', '#ffb759', '#4c83ff',
+        //     '#60daab', '#fffd08', '#467aff', '#ff30b5'],
+        //   series: {
+        //     type: 'sunburst',
+        //     highlightPolicy: 'ancestor',
+        //     data: data,
+        //     radius: [0, '95%'],
+        //     sort: null,
+        //     itemStyle: {
+        //       borderWidth: 0
+        //     },
+        //     label: {
+        //       rotate: 'radial'
+        //     },
+        //     levels: [
+        //       {},
+        //       {
+        //         r0: '25%',
+        //         r: '55%',
+        //         label: {
+        //           position: 'left',
+        //           fontSize: 10
+        //         },
+        //         itemStyle: {
+        //           borderWidth: 1
+        //         }
+        //       },
+        //       {
+        //         r0: '55%',
+        //         r: '95%',
+        //         label: {
+        //           position: 'left',
+        //           padding: 3,
+        //           silent: false,
+        //           fontSize: 10
+        //         },
+        //         itemStyle: {
+        //           borderWidth: 1
+        //         }
+        //       }
+        //     ]
+        //   }
+        // }
+        var m2R2Data = [
+          {value: 335, legendName: '村居管理01', name: '种类01  335'},
+          {value: 310, legendName: '村居管理02', name: '种类02  310'},
+          {value: 234, legendName: '村居管理03', name: '种类03  234'},
+          {value: 154, legendName: '村居管理04', name: '种类04  154'},
+          {value: 335, legendName: '村居管理05', name: '种类05  335'},
+          {value: 335, legendName: '村居管理06', name: '种类06  335'},
+          {value: 335, legendName: '社会公益07', name: '种类07  335'},
+          {value: 335, legendName: '社会公益08', name: '种类08  335'},
+          {value: 335, legendName: '社会公益09', name: '种类09  335'},
+          {value: 335, legendName: '社会公益10', name: '种类10  335'},
+          {value: 335, legendName: '社会公益09', name: '种类11  335'},
+          {value: 335, legendName: '社会公益10', name: '种类12  335'}
+        ]
+        var option = {
+          color: ['#01c9fd', '#ff8f5f', '#6ec26e', '#fc5976',
+            '#ae74f3', '#ff7391', '#ffb759', '#4c83ff',
+            '#60daab', '#fffd08', '#467aff', '#ff7ab7'],
+          tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+              var str = params.seriesName + '</br>' +
+                params.marker + '' + params.data.legendName + '</br>' +
+                '数量：' + params.data.value + '</br>' +
+                '占比：' + params.percent + '%'
+              return str
+            }
+          },
+          legend: {show: false},
+          series: [
+            {
+              name: '标题',
+              type: 'pie',
+              radius: ['40%', '70%'],
+              clockwise: false, //饼图的扇区是否是顺时针排布
+              avoidLabelOverlap: false,
+              label: {
+                normal: {
+                  show: true,
+                  formatter: function (params) {
+                    return params.data.legendName
+                  }
+                }
+              },
+              labelLine: {
+                normal: {
+                  length: 12,
+                  length2: 3
+                }
+              },
+              data: m2R2Data
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      toggleCunData: function (type) {
+        this.cunBtnType = type
+        var _self = this
+        var url = type === '占比' ? '/cunZhanbi' : '/cunShuliang'
+        axios.get(url).then(function (res) {
+          _self.cunData = res.data.data
+        })
+      },
+      getMapData: function () {
+        var _self = this
+        axios.get('/getMapData').then(function (res) {
+          _self.zhenData = res.data.data
+          _self.renderMap()
+        })
+      },
+      renderMap: function () {
+        var _self = this
+        this.mapChart = echarts.init(document.getElementById('rcMapChart'))
+        // 指定图表的配置项和数据
+        var cData = convertData(this.zhenData)
+        // console.log(this.zhenData)
+        // console.log(cData)
+        var option = {
+          tooltip: {
+            trigger: 'item',
+            formatter: function (param) {
+              return param.data.name + '，信用指数：' + param.data.value[2]
+            }
+          },
+          bmap: {
+            center: [122.279306, 37.20394],
+            zoom: 11,
+            roam: false,
+            mapStyle: {style: 'midnight'}
+          },
+          series: [
+            {
+              type: 'effectScatter',
+              coordinateSystem: 'bmap',
+              showEffectOn: 'render',
+              symbolSize: function (v) { // 标准大小
+                return 15 + v[0] / 2500
+              },
+              rippleEffect: {
+                brushType: 'stroke',
+                scale: 3
+              },
+              label: {
+                normal: {
+                  formatter: '{b}',
+                  position: 'top',
+                  show: true
+                }
+              },
+              itemStyle: {
+                color: '#2ed7ff'
+              },
+              data: cData
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        this.mapChart.setOption(option)
+        this.mapChart.on('click', function (params) {
+          // 深拷贝当前选中行
+          _self.zhenRowClick(params.data.row)
+        })
+      },
+      zhenRowClick: function (row) {
+        // 深拷贝当前选中行
+        this.currentMap = deepClone(row)
+        if (!this.mapPointChart) { // 如果不存在则初始化表格
+          this.mapPointChart = echarts.init(document.getElementById('mapPointChart'))
+        }
+        var option = {
+          color: ['#0b87ed', '#d20f60'],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            }
+          },
+          legend: {
+            bottom: 0,
+            icon: 'rect',
+            itemWidth: 10,
+            itemHeight: 10,
+            textStyle: {
+              color: '#7893ad'
+            }
+          },
+          grid: {
+            top: 30,
+            right: 50,
+            bottom: 50
+          },
+          xAxis: {
+            type: 'category',
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            axisLabel: {
+              color: '#8fa0cd'
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#222b45'}
+            },
+            data: this.currentMap.list.xData
+          },
+          yAxis: [
+            {
+              type: 'value',
+              name: '数据量',
+              nameTextStyle:{color:'#0b87ed',fontSize:14},
+              splitNumber: 10,
+              axisTick: {
+                show: false
+              },
+              axisLabel: {
+                color: '#8fa0cd'
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {color: '#8fa0cd'}
+              },
+              splitLine: {
+                show: true,
+                lineStyle: {color: '#222b45'}
+              }
+            },
+            {
+              type: 'value',
+              name: '信用指数',
+              nameTextStyle:{color:'#d20f60',fontSize:14},
+              min: 0,
+              max: 1600,
+              splitNumber: 10,
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {color: '#8fa0cd'}
+              },
+              splitLine: {
+                show: false
+              }
+            }
+          ],
+          series: [
+            {
+              name: '数据量',
+              type: 'line',
+              data: this.currentMap.list.numData,
+              label: {
+                show: true,
+                position: 'top'
+              }
+            },
+            {
+              name: '信用指数',
+              type: 'line',
+              data: this.currentMap.list.valData,
+              yAxisIndex: 1,
+              label: {
+                show: true,
+                position: 'top'
+              }
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        this.mapPointChart.setOption(option)
+        this.mapPointModal = true
+        // console.log(this.currentMap)
+      },
+      showDeptModal: function () {
+        this.deptNumModal = true
+        this.memoModal = false
+        this.redBlackModal = false
+        this.qyJcModal = false
+        this.grJcModal = false
+        this.qyJcContentModal = false
+        this.grJcContentModal = false
+      },
+      showMemoModal: function () {
+        this.deptNumModal = false
+        this.memoModal = true
+        this.redBlackModal = false
+        this.qyJcModal = false
+        this.grJcModal = false
+        this.qyJcContentModal = false
+        this.grJcContentModal = false
+      },
+      showRedBlackModal: function () {
+        this.memoModal = false
+        this.redBlackModal = true
+        this.deptNumModal = false
+        this.qyJcModal = false
+        this.grJcModal = false
+        this.qyJcContentModal = false
+        this.grJcContentModal = false
+      },
+      showRedModal: function () {
+        this.memoModal = false
+        this.redModal = true
+        this.deptNumModal = false
+        this.qyJcModal = false
+        this.grJcModal = false
+        this.qyJcContentModal = false
+        this.grJcContentModal = false
+      },
+      showBlackModal: function () {
+        this.memoModal = false
+        this.blackModal = true
+        this.deptNumModal = false
+        this.qyJcModal = false
+        this.grJcModal = false
+        this.qyJcContentModal = false
+        this.grJcContentModal = false
+      },
+      showQyJcModal: function () {
+        this.memoModal = false
+        this.redBlackModal = false
+        this.deptNumModal = false
+        this.qyJcModal = true
+        this.grJcModal = false
+        this.qyJcContentModal = false
+        this.grJcContentModal = false
+      },
+      showGrJcModal: function () {
+        this.memoModal = false
+        this.redBlackModal = false
+        this.deptNumModal = false
+        this.qyJcModal = false
+        this.grJcModal = true
+        this.qyJcContentModal = false
+        this.grJcContentModal = false
+      },
+      showQyJcContentModal: function () {
+        this.memoModal = false
+        this.redBlackModal = false
+        this.deptNumModal = false
+        this.qyJcModal = false
+        this.grJcModal = false
+        this.qyJcContentModal = true
+        this.grJcContentModal = false
+      },
+      showGrJcContentModal: function () {
+        this.memoModal = false
+        this.redBlackModal = false
+        this.deptNumModal = false
+        this.qyJcModal = false
+        this.grJcModal = false
+        this.qyJcContentModal = false
+        this.grJcContentModal = true
+      },
+      showQyJcDetail: function (row) {
+        var _self = this
+        this.currentRowName = row.comp
+        axios.get('/qyJcDetail', row.name).then(function (res) {
+          _self.jcQyContentData = res.data.list
+          _self.showQyJcContentModal()
+        })
+      },
+      showGrJcDetail: function (row) {
+        var _self = this
+        this.currentRowName = row.name
+        axios.get('/grJcDetail', row.name).then(function (res) {
+          _self.jcGrContentData = res.data.list
+          _self.showGrJcContentModal()
+        })
+      }
+    }
+  })
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,644 @@
+@import "./common/base.styl"
+@import "./common/bin-ui.styl"
+i {
+  font-style normal
+}
+
+//样式主要部分
+#app {
+  .screen-wrapper {
+    user-select: none;
+    width: 3840px;
+    height: 1080px;
+    background: #02061a;
+
+    .main {
+      position: relative;
+      height: calc(100% - 96px);
+      padding: 20px 40px;
+
+      .block1-1 {
+        height: 850px;
+
+        .table1 {
+          position: relative;
+          width: 100%;
+          height: 100%;
+
+          > h2 {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            line-height: 50px;
+            background: url("../images/title-bg.png") center bottom no-repeat;
+            -webkit-background-size: 100% 100%
+            background-size: 100% 50%
+          }
+
+          .per-count {
+            padding-left 30px
+
+            .pc-item {
+              display block
+              padding-top: 10px
+              padding-bottom: 10px
+
+              .inner {
+                display inline-block
+
+                .inner-img {
+                  height: 40px
+                  width: 40px
+                  margin 0 5px
+                }
+
+                .pci-num {
+                  display block
+                }
+
+                .pci-title {
+                  display block
+                }
+              }
+            }
+          }
+        }
+
+        .table2 {
+          > h2 {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            line-height: 50px;
+            -webkit-background-size: 100% 100%
+            background-size: 100% 50%
+          }
+
+          .per-count {
+            .pc-item {
+              display block
+              padding-left: 50px
+              padding-top: 10px
+              padding-bottom: 10px
+
+              .pci-num {
+                display block
+              }
+
+              .pci-title {
+                display block
+              }
+            }
+          }
+        }
+      }
+
+      .block1-2 {
+        .table1 {
+          position: relative;
+          width: 100%;
+          height: 100%;
+
+          > h2 {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            line-height: 50px;
+            background: url("../images/title-bg.png") center bottom no-repeat;
+            -webkit-background-size: 100% 100%
+            background-size: 100% 50%
+          }
+
+          .per-count {
+            .pc-item {
+              display block
+              padding-left: 50px
+              padding-top: 10px
+              padding-bottom: 10px
+
+              .pci-num {
+                display block
+              }
+
+              .pci-title {
+                display block
+              }
+            }
+          }
+        }
+
+        .table3 {
+          position: relative;
+          width: 100%;
+          height: 100%;
+
+          > h2 {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            line-height: 50px;
+            -webkit-background-size: 100% 100%
+            background-size: 100% 50%
+            background: url(../images/title-bg.png) center bottom no-repeat;
+
+          }
+
+          span {
+            font-size: 12px
+          }
+
+          .per-count {
+            .pc-item {
+              display block
+              padding-left: 50px
+              padding-top: 10px
+              padding-bottom: 10px
+
+              .pci-num {
+                display block
+              }
+
+              .pci-title {
+                display block
+              }
+            }
+          }
+
+          .s-table {
+            overflow visible
+            display inline-block
+            width: 455px;
+            vertical-align top
+
+            .bin-table-small {
+              td {
+                height: 30px
+              }
+            }
+          }
+
+          .chart-title {
+            position absolute
+            right 122px
+            top 70px
+            font-size: 16px
+            color #fff
+            background-color: #161b41
+            display block
+            width 160px
+            text-align center
+            margin 0 auto
+            line-height: 30px
+          }
+        }
+      }
+    }
+  }
+}
+
+#app .bin-scrollbar__wrap {
+  overflow-x: hidden;
+}
+
+.bgc0f1432 {
+  background-color: #0f1432
+}
+
+//覆盖清除h2标题底部梯形图
+#app .screen-wrapper .main .block1-1 .table1 .bg-title-none, #app .screen-wrapper .main .block1-1 .table3 .bg-title-none {
+  background: none
+}
+
+#app .screen-wrapper .main .block1-2 .table1 .bg-title-none,
+#app .screen-wrapper .main .block1-2 .table3 .bg-title-none {
+  background: none
+}
+
+.chart-t {
+  width 45%
+  display inline-block
+  text-align center
+}
+
+.bg-foot {
+  background: url("../images/foot.png") center bottom no-repeat;
+}
+
+.chart-inline {
+  vertical-align top
+  display inline-block
+}
+
+//处理查看更多被h2底图遮盖
+#app .screen-wrapper .v-full-block .more {
+  z-index 10
+}
+
+//清除添加箭头后表格边框闪动
+thead tr::after {
+  content ''
+}
+
+.bin-table-row {
+  position relative
+
+  &::after {
+    content ''
+  }
+}
+
+//表格右侧箭头
+tr.bin-table-row-hover::after {
+  position absolute
+  right -25px
+  margin-top 4px
+  content ''
+  display inline-block
+  height: 20px
+  width: 20px
+  background-size: contain;
+  background-image: url(../images/tip001.png)
+  background-repeat: no-repeat
+}
+
+//点击后高亮右侧箭头
+.bin-table .bin-table-row-highlight::after {
+  position absolute
+  right -25px
+  margin-top 4px
+  content ''
+  display inline-block
+  height: 20px
+  width: 20px
+  background-size: contain;
+  background-image: url(../images/tip001.png)
+  background-repeat: no-repeat
+}
+
+
+//覆盖鼠标移入、点击样式
+
+//重点行业基本情况
+.t-style1 {
+  .bin-table-header {
+    .bin-table-column-center {
+      background-color: #0f1432
+      height 60px
+    }
+  }
+
+  .bin-table-row {
+    .bin-table-column-center {
+      background-color: #192648
+      height 60px
+
+      &:first-child {
+        background-color: #0f1432
+      }
+    }
+  }
+}
+
+//对比图表
+.chart-container {
+  margin 0 auto
+  //padding-left: 20px
+  width 690px
+  position relative
+
+  .t-tip3 {
+    position absolute
+    left -80px
+    top: calc(50% - 110px)
+    font-size: 18px
+    line-height: 24px
+    font-weight: 700
+    background-color: #121943
+    border-top: 6px solid #161f57
+    padding 10px 30px
+    width 24px
+    box-sizing content-box
+    color #00ccff
+  }
+
+  .t-tip4 {
+    color #00ccff
+    font-size: 20px
+    font-weight: 700
+    position absolute
+    bottom -20px
+    width 400px
+    left calc(50% - 185px)
+
+    .tt-inner {
+      text-align center
+      background-color: #121943
+      width 150px
+      height: 40px
+      line-height: 40px
+    }
+  }
+
+  .innerTips {
+
+    .t-tip1 {
+      position absolute
+      left -80px
+      top: calc(50% - 110px)
+      font-size: 18px
+      line-height: 24px
+      font-weight: 700
+      background-color: #121943
+      border-top: 6px solid #161f57
+      padding 10px 30px
+      width 24px
+      box-sizing content-box
+      color #00ccff
+    }
+
+    .t-tip2 {
+      color #00ccff
+      font-size: 20px
+      font-weight: 700
+      position absolute
+      bottom -20px
+      width 400px
+      left calc(50% - 200px)
+
+      .tt-inner {
+        text-align center
+        background-color: #121943
+        width 150px
+        height: 40px
+        line-height: 40px
+      }
+    }
+
+    .left1 {
+      left: -12px
+      width: 300px
+      -webkit-border-radius: 20px
+      -moz-border-radius: 20px
+      border-radius: 20px
+      overflow hidden
+      bottom: -30px;
+    }
+
+    .left2 {
+      left 450px
+      width: 300px
+      -webkit-border-radius: 20px
+      -moz-border-radius: 20px
+      border-radius: 20px
+      overflow hidden
+      bottom: -30px;
+    }
+  }
+
+  #barChart2 {
+    width: 310px;
+    height: 350px;
+  }
+
+  #barChart3 {
+    width: 260px;
+    height: 350px;
+  }
+
+  #barChart4 {
+    width: 280px;
+    height: 350px;
+  }
+
+  #barChart5 {
+    width: 295px;
+    height: 350px;
+    margin-left: -68px
+  }
+
+  #barChart6 {
+    width: 280px;
+    height: 680px;
+  }
+
+  #barChart7 {
+    width: 295px;
+    height: 680px;
+    margin-left: -10px
+  }
+
+  .chart-tip {
+    height: 346px
+    width 100px
+    padding 58px 10px 24px
+    display flex
+    flex-flow: column;
+
+    .ci-item {
+      background-color: #0e132d
+      padding-top 6px
+      flex 1
+      text-align center
+      font-size: 16px
+      color #8fa0cd
+      border-right: 1px solid #303857
+      border-left: 1px solid #303857
+      position relative
+
+
+      &::after {
+        bottom: 0
+        content ''
+        width 80%
+        left 50%
+        transform translateX(-50%)
+        background-color: #303857
+        height: 1px
+        display block
+        position absolute
+      }
+
+      &:last-child {
+        &::after {
+          height: 0
+        }
+      }
+    }
+  }
+}
+
+
+
+//红黑名单占比
+.t-style2 {
+  .s-table {
+    .bin-table-header {
+      .bin-table-column-center {
+        background-color: #0f1432
+        color #454e6f
+      }
+    }
+
+    .bin-table-row {
+      .bin-table-column-center {
+        background-color: #192648
+        color #fff
+      }
+
+      &:hover {
+        .bin-table-column-center {
+          background-color: #0f36ac
+        }
+      }
+    }
+
+    .bin-table-row-highlight {
+      .bin-table-column-center {
+        background-color: #0f36ac
+      }
+    }
+  }
+}
+
+.special1 {
+  .bin-table-wrapper{
+    .bin-table-header {
+      .bin-table-column-center {
+        background-color: #0f1432
+        height 65px
+      }
+    }
+
+  }
+}
+.special2 {
+  .bin-table-wrapper{
+    .bin-table-header {
+      .bin-table-column-center {
+        background-color: #0f1432
+        height 60px
+      }
+    }
+
+  }
+}
+.t-style3 {
+  .bin-table-header {
+    .bin-table-column-center {
+      background-color: #0f1432
+      height 60px
+    }
+  }
+
+  .bin-table-row {
+    .bin-table-column-center {
+      background-color: #192648
+      height 60px
+
+      &:first-child {
+        background-color: #0f1432
+      }
+    }
+  }
+}
+
+//查看数量占比按钮
+.cp-btn {
+  position absolute
+  right 30px
+  top 5px
+  cursor pointer
+  padding 10px 20px
+  background-color: #0f1432
+  color #1293f9
+  font-weight: 700
+  -webkit-border-radius: 24px
+  -moz-border-radius: 24px
+  border-radius: 24px
+  font-size:16px
+
+  &:nth-child(2) {
+    right 125px
+  }
+
+  &:nth-child(3) {
+    right 234px
+  }
+}
+
+.stat-img {
+  height 15px
+  margin-right 5px
+  vertical-align text-top
+}
+
+#lineChart2 {
+  width: 400px;
+  height: 330px;
+  float: right;
+  margin-top: 60px
+}
+
+#lineChart3 {
+  width: 400px;
+  height: 320px;
+  float: right;
+  margin-top: 60px
+}
+.add{
+  position absolute
+  bottom -2px
+  line-height:26px
+  text-indent .5em
+}
+
+//覆盖bin-ui样式 调亮表格内文字颜色
+.t-style2 .s-table .bin-table-header .bin-table-column-center{
+  color #fff
+}
+
+
+.bin-table table{
+  font-size:16px
+}
+.table3 .bin-table table{
+  font-size: 16px
+  line-height:1
+}
+#app .screen-wrapper .main .block1-2 .table3 span{
+  font-size:16px
+}
+#app .screen-wrapper .main .block1-2 .table3 span:nth-child(4){
+  line-height:1.5
+}
+.t-tip-toggle{
+  position absolute
+  right -30px
+  top 5px
+  cursor pointer
+  padding 10px 20px
+  background-color: #0f1432
+  color #1293f9
+  font-weight: 700
+  -webkit-border-radius: 24px
+  -moz-border-radius: 24px
+  border-radius: 24px
+  font-size:16px
+  z-index 20
+}
+
+
+.chart-container .innerTips .t-tip2 .tt-inner{
+  font-size:18px
+  background-color: transparent
+}
+.chart-container .innerTips .left1{
+  overflow visible
+}
+.chart-container .innerTips .left2{
+  overflow visible
+}

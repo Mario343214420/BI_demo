@@ -1,0 +1,642 @@
+@import "./common/base.styl"
+@import "./common/bin-ui.styl"
+
+$blue = #00AEFF //主题蓝色
+$black = #02061a
+$bd = #181e3c //边框色
+$bgHighLight = #0e35ab
+[flex~="main:justify-a"]
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-around
+
+html
+  height: 1080px
+#app
+  .screen-wrapper
+    user-select: none;
+    width: 3840px;
+    height: 1080px;
+    background: $black
+
+    .main
+      position: relative;
+      height: calc(100% - 96px);
+      padding: 20px 40px;
+
+      .block1
+        //统一梯形title
+
+        .block-title
+          position: relative;
+          font-size: 20px;
+          font-weight: bold;
+          text-align: center;
+          color: #fff;
+          padding: 15px;
+          background: url(../images/title-bg.png) center bottom no-repeat;
+          -webkit-background-size: 100% 50%
+          background-size: 100% 50%
+
+          .title-tip
+            position absolute
+            left 0
+            color $blue
+            font-size: 24px
+
+        .num-bar
+          width: 100%
+          border: 1px solid $bd
+          border-bottom: none
+          border-bottom: none
+          padding 5px
+          font-size: 18px
+          padding-left: 70px
+          color $blue
+
+          .number
+            > span
+              display inline-block
+              color $blue
+              font-weight: 700
+              background-color: #131735
+              margin 0 8px
+              padding 0 10px
+              font-size: 28px
+
+        .block1-1
+          width: 450px
+          overflow hidden
+          height: 825px;
+          left 30px;
+          top 80px
+          position absolute
+          #rcMapChart
+            z-index 1
+            width: 450px
+            height: 860px
+            bottom: -15px;
+          .map-data-bar
+            z-index 2
+            position absolute
+            background-color: rgba(19,33,63,0.9);
+            .header
+              display none
+            .map-title
+              border-left: 4px solid #00eeff
+              color #00ceff
+              font-size:18px
+              padding-left 20px
+              height 15px
+              line-height: 16px
+              margin-top:15px
+              margin-bottom: 15px
+
+            .map-data
+              padding-top: 15px
+              img
+                width: 56px
+                height: 56px
+              .add-box
+                margin-top: -5px
+                width: 150px
+                height: 56px
+                padding 0 20px
+                .add-num
+                  color #00c2ff
+                  font-size: 26px
+                  font-weight: 700
+                .add-unit
+                  color: #fff;
+      .block2
+        width: 100%
+        .over-hidden
+          overflow hidden
+          #rcMapChart
+            transform: scale(1.2) translate(-50px, 4px);
+
+        .block2-2
+          display block
+        .block2-2
+          //width 388px
+          box-sizing border-box
+          //padding 0 20px
+      .block3
+        height: 830px
+        .block-title
+          position relative
+          width 100%
+          text-align center
+          line-height: 60px
+          height: 60px
+          .select-tip
+            position absolute
+            right 0
+            top: 10px
+            -webkit-border-radius: 20px
+            -moz-border-radius: 20px
+            border-radius: 20px
+            background-color: #0d1335
+            color #2967b8
+            height: 40px
+            padding 0 20px
+            line-height: 40px
+            cursor pointer
+            font-size:18px
+          .t-content
+            font-weight: 700
+            color #fff
+            font-size: 20px
+
+        .block3-1
+          height: 415px
+          .table3
+            position: relative;
+            width: 582px
+            .inner
+              height: 355px
+              .s-table
+                flex 2
+                overflow visible
+                display inline-block
+                //width: 455px;
+                vertical-align top
+                .bin-table
+                  table
+                    font-size: 14px
+                    thead
+                      th
+                        color #3b4f74
+                        .bin-table-cell
+                           padding 12px 8px
+                    .bin-table-cell
+                      padding 11px 8px
+            tr
+              &::after
+                position absolute
+                content ''
+                height: 20px
+                width: 20px
+                display inline-block
+          .chart-container
+            flex 3
+            .inner
+              height: 355px
+              margin-left: 20px
+              background-color: #0e132f
+              padding 10px
+              box-sizing border-box
+              .chart-lendge
+                height: auto
+                padding 50px 30px 0 30px
+                .lendge-bar
+                  font-size:18px
+                  line-height: 30px
+                  span
+                    &:nth-child(1)
+                      color #7579b1
+                      margin-right:2px
+                    &:nth-child(2)
+                      color #fff
+              .chart-inline
+                height: 330px
+                width 500px
+        .block3-2
+          height: 415px
+          .block3-9
+            .top
+              padding: 15px 0;
+              background-color: #0f1432;
+              span
+                color: #fff;
+                text-align: center;
+
+            .base-core
+              position: absolute;
+              top: 272px;
+              left: 0;
+              color: #fff;
+              padding: 2px;
+              font-size: 14px;
+
+            .base-core-line
+              position: absolute;
+              top: 276px;
+              left: 45px;
+              width: 45px;
+              font-size: 12px;
+              text-align: right;
+              padding-right: 15px;
+              &:after
+                content: ''
+                position: absolute;
+                right: 0;
+                bottom: 6px;
+                width: 8px;
+                height: 1px;
+                background-color: #3d5075;
+
+
+            .block-level
+              ul
+                border: 1px solid #3d5075;
+                width: 60%;
+                margin: 0 auto;
+                li
+                  display: flex;
+                  height: 44px;
+                  line-height: 44px;
+                  box-sizing: border-box;
+                  border-bottom: 1px solid #303a60;
+                  &:last-child
+                    border-bottom: none;
+
+                  > div
+                    text-align: center;
+                    height: 100%;
+                    flex: 1;
+                    &:first-child
+                      width: 70px;
+                      flex: 0 0 70px;
+                      background-color: #0e132d;
+                      color: #7e83bd;
+                      border-right: 1px solid #303a60;
+
+                    &:last-child
+                      padding-top: 8px;
+                      background-color rgba(0, 0, 0, 0.2);
+                      .bin-rate .bin-rate__icon
+                        font-size: 24px;
+                        margin-right: 4px;
+          .specialBot
+            -ms-background-position-x: 54px
+            background-position-x: 54px
+            height: 383px
+            width: 410px
+            padding-right 40px
+            -webkit-background-size: 80% 30%
+            background-size: 83% 20%
+          .specialBot2
+            -ms-background-position-x: 24px
+            background-position-x: 24px
+            height: 383px
+            width: 410px
+            padding-right 40px
+            -webkit-background-size: 80% 30%
+            background-size: 83% 20%
+          .block3-2-1
+            width: 582px
+            .block-title
+              position relative
+              width 100%
+              text-align center
+              line-height: 60px
+              height: 60px
+              .select-tip
+                position absolute
+                right 0
+                top: 10px
+                -webkit-border-radius: 20px
+                -moz-border-radius: 20px
+                border-radius: 20px
+                background-color: #0d1335
+                color #2967b8
+                height: 40px
+                padding 0 20px
+                line-height: 40px
+                cursor pointer
+                font-size:18px
+            .bin-table-wrapper
+              .bin-table
+                line-height: 56px
+                .bin-table-header
+                  td,th
+                    color #4c587a
+                .bin-table-tbody
+                  td,th
+                    &:nth-child(1)
+                      color #4c587a
+
+          .block3-2-3
+            width 388px
+            box-sizing border-box
+            padding 0 20px
+.double-select
+  overflow hidden
+  width: 582px
+  height: 496px
+  .btns
+    background-color: #151a40;
+    padding-left 12px
+
+  .btn
+    position: relative;
+    width: 185px;
+    height: 40px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    color: #fff;
+    overflow: hidden;
+    line-height: 40px;
+    cursor: pointer;
+    padding-right: 5px;
+
+  .click-btn
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: background-color ease-in-out .5s;
+    background-color: #222d4b;
+
+  .active .click-btn
+    background-color: #0e35ab;
+
+  .active .cancel
+    right: 0;
+
+  .cancel
+    position: absolute;
+    color: #a1aee6;
+    -webkit-border-radius: 15px 0 0 15px;
+    -moz-border-radius: 15px 0 0 15px;
+    border-radius: 15px 0 0 15px;
+    background-color: #3159d1;
+    display: inline-block;
+    right: -50px;
+    top: 0;
+    width: 50px;
+    text-align: center;
+    transition: right ease-in-out .5s;
+    margin: 5px 0;
+    line-height: 30px;
+    font-size: 14px;
+    font-weight: 700;
+    text-indent: .4em;
+
+
+tr.bin-table-row-hover
+  td
+    background-color: $bgHighLight
+
+
+//表格右侧箭头
+tr.bin-table-row-hover::after,
+.bin-table .bin-table-row-highlight::after
+  position absolute
+  right -25px
+  margin-top 13px
+  content ''
+  display inline-block
+  height: 20px
+  width: 20px
+  background-size: contain;
+  background-image: url(../images/tip001.png)
+  background-repeat: no-repeat
+
+
+//点击后高亮右侧箭头
+tr.bin-table-row-highlight.bin-table-row-hover td,
+.bin-table-row-hover td,
+.bin-table .bin-table-row-highlight td
+  background-color: $bgHighLight
+
+
+#app .screen-wrapper .main .block3-9 .block-level .level-container
+  width: 300px
+  position: absolute;
+  left: 90px;
+
+#app .screen-wrapper .main .block3-9 .block-level ul li > div:nth-child(2)
+  padding-top: 13px;
+  background-color: rgba(0,0,0,0.2);
+
+#app .screen-wrapper .main .block3-9 .block-level .level-container li .count
+  width 50px
+  flex .6
+  border-left: 1px solid #3d5075
+  background-color: rgba(0,0,0,0.2);
+  color #FFFFFF
+
+#app .screen-wrapper .main .block3-9 .block-level .level-container li .perc
+  padding-top:0
+  width 50px
+  flex .4
+  border-left: 1px solid #3d5075
+  color #FFFFFF
+
+#app .bin-scrollbar__wrap
+  overflow-x: hidden;
+
+.dipan
+  background: url(../images/foot.png) center bottom no-repeat;
+  -webkit-background-size: 100% 60px
+  background-size: 100% 60px
+
+.modal-table
+  width: 581px
+  tr
+    &::after
+      position absolute
+      content ''
+      height: 20px
+      width: 20px
+      display inline-block
+
+.block2-1
+  width: 400px
+  .h425
+    height: 425px
+  .block-title
+    position relative
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    padding: 15px;
+    background: url(../images/title-bg.png) center bottom no-repeat;
+    -webkit-background-size: 100% 50%
+    background-size: 100% 50%
+
+    .select-tip
+      position absolute
+      right 0
+      font-weight: 400
+      -webkit-border-radius: 20px
+      -moz-border-radius: 20px
+      border-radius: 20px
+      display inline-block
+      height 40px
+      background-color: #0f36ac
+      padding 0 20px
+      line-height: 40px
+      font-size: 16px
+      text-align center
+      cursor pointer
+      top 0
+
+
+  .selected
+    background-color: #131735
+    color $blue
+    height: 52px
+    font-size: 16px;
+    padding-left: 10px;
+    line-height: 52px
+
+    .selected-inner
+      border: 1px solid $bd
+      -webkit-border-radius: 6px
+      -moz-border-radius: 6px
+      border-radius: 6px
+      color #ffffff
+      line-height: 26px
+      padding 6px 20px
+      margin: 0 10px
+
+  .table
+    width 100%
+    border-top: 1px solid $bd
+    border-left: 1px solid $bd
+
+    .col
+      flex 1
+
+      &:nth-child(1)
+        .row
+          &:nth-child(n+2)
+            color $blue
+
+      .row
+        color #fff
+        text-align center
+        border-right: 1px solid $bd
+        border-bottom: 1px solid $bd
+        line-height: 46px
+        font-size: 16px
+
+    .tip
+      font-size: 18px
+      text-align center
+      border-right: 1px solid $bd
+      border-bottom: 1px solid $bd
+      line-height: 250px
+.block1-3
+  position absolute
+  left: 860px;
+  top: 85px;
+  #cityLineChart
+    width: 450px;
+    height: 400px
+  #townLineChart
+    margin-top: 30px
+    width: 450px;
+    height: 400px
+.block2-2
+  width: 540px
+  height: 900px;
+  overflow: hidden;
+  .ring-wrapper
+    margin-bottom 100px
+    width: 540px
+    .title
+      text-align center
+      font-weight: 700
+      font-size: 20px
+      width: 540px
+      color #fff
+      margin: 20px 0
+    .double-ring
+      background-color: #0e122e
+      width: 550px;
+      height: 300px
+      justify-content space-between
+      margin-bottom: 100px
+      div
+        padding-bottom: 40px
+      #cityDoubleRingChartL
+        width: 260px;
+        height: 300px
+      #townDoubleRingChartL
+        width: 260px;
+        height: 300px
+      #cityDoubleRingChartR
+        width: 260px;
+        height: 300px
+      #townDoubleRingChartR
+        width: 260px;
+        height: 300px
+.block2-3
+  width 440px
+  .block2-3-1
+    width 440px
+    box-sizing border-box
+    padding 0 0 0 40px
+    .rank-table
+      .left-bar
+        width: 60px
+        position relative
+        top 18px
+        div[class^=base-core]
+          position absolute
+        .base-core-line
+          left 44px
+          width: 32px
+          &::after
+            right -8px
+            bottom 10px
+            position absolute
+            content ''
+            display inline-block
+            vertical-align bottom
+            height: 1px
+            width: 4px
+            background-color: #2c3453
+        .base-core
+          top 148px
+          left -12px
+          color #92ceff
+          background-color: #0f36ac
+          padding 2px 4px
+
+      .block-level
+        .level-container
+          border-left: 1px solid $bd
+          border-top: 1px solid $bd
+          li
+            height: 50px
+            line-height: 50px
+            display flex
+            div
+              height: 56px
+              line-height: 56px
+            >div
+              border-right: 1px solid $bd
+              border-bottom: 1px solid $bd
+              &:nth-child(1)
+                width 45px
+                text-align center
+                background-color: #0e132d
+                border-color: #2c3453
+              &:nth-child(2)
+                width 134px
+                padding-left:10px
+              &:nth-child(3)
+                text-align center
+                width 60px
+              &:nth-child(4)
+                text-align center
+                width 50px
+    .block-title
+      text-align center
+      font-weight: 700
+      font-size: 20px
+      color #fff
+      margin: 20px 0
+  .special
+    padding-bottom: 40px;
+    padding-right: 30px
+.block2-4
+  width: 955px
+  height: 900px
+  position relative

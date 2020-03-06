@@ -1,0 +1,2510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>企业信用分析</title>
+  <!--required-->
+  <!--核心库、动画库、请求库-->
+  <script src="../js/lib/vue.min.js"></script>
+  <script src="../js/lib/utils/axios.min.js"></script>
+  <!--required end-->
+  <!--第三方库和自己编写的插件-->
+  <!--bin-ui-->
+  <link rel="stylesheet" href="../js/lib/bin-ui/styles/index.css">
+  <script src="../js/lib/bin-ui/bin-ui.umd.min.js"></script>
+  <!--charts-->
+  <script src="../js/lib/echarts/echarts.min.js"></script>
+  <!--self-->
+  <link rel="stylesheet" href="../styles/index2.css">
+  <link rel="stylesheet" href="../styles/index3_left.css">
+  <style>
+    .flex_spaceBetween {
+      display: flex;
+      justify-content: space-between;
+    }
+
+  </style>
+</head>
+<body>
+<!DOCTYPE html>
+<div id="app" v-cloak>
+  <div class="screen-wrapper">
+    <v-header label="荣成市社会信用综合分析平台">
+      <a href="index.html">全市信用综合分析平台</a>
+      <a href="index2.html">个人信用分析</a>
+      <a href="index3.html" class="active">企业信用分析</a>
+      <a href="index4.html">镇街信用分析</a>
+      <a href="index5.html">信用奖惩分析</a>
+    </v-header>
+    <div class="main">
+      <v-block label="重点人群分析" :rect="[40,20,1870,940]">
+        <div class="block-new" flex="main:justify-a">
+          <div class="block-inner">
+            <div class="top">
+              <p class="block-title">
+                <span>自然人等级分布</span>
+                <!--<span class="select-tip" @click="showModal('select1')">选择  ></span>-->
+              </p>
+              <p class="num-bar">
+                <span>人口数：</span>
+                <span class="number" v-html="persCount"></span>
+              </p>
+              <b-table size="small" :show-header="false" :columns="countriesData.persCols"
+                       :data="countriesData.persData" border disabled-hover>
+
+              </b-table>
+            </div>
+            <div class="bot dipan" style="margin-top: 2px;">
+              <div id="lineAreaChart" style="width: 450px;height: 430px;"></div>
+            </div>
+          </div>
+          <div class="block-inner dipan">
+            <div class="map-title">荣成市地图</div>
+
+            <div class="over-hidden">
+              <div id="rcMapChart" style="width: 100%;height:860px;"></div>
+
+            </div>
+          </div>
+          <div class="block-inner dipan">
+            <div class="top">
+              <p class="block-title">
+                <span>成长型企业</span>
+                <span class="select-tip" v-show="!more1" @click="showModal('more1')">更多 ></span>
+              </p>
+              <div class="msg-bar" flex="main:justify-a">
+                <span class="bar-inner" flex>
+                  <img src="../images/icon-country.png" alt="">
+                  <span>
+                    <p>{{msgBarData.grow?msgBarData.grow.comCount:'数据暂无'}}</p>
+                    <p>企业数量</p>
+                  </span>
+                </span>
+                <span class="bar-inner" flex>
+                  <img src="../images/icon-streets.png" alt="">
+                  <span>
+                    <p>{{msgBarData.ipt?msgBarData.ipt.msgCount:'数据暂无'}}</p>
+                    <p>信息总量</p>
+                  </span>
+                </span>
+              </div>
+              <b-table :columns="growComCol"
+                       :data="growComData.slice(0,5)" border disabled-hover>
+                <template v-slot:name="scope">
+                <span class="blue2 pointer t-ellipsis"
+                      @click="showGrowComDetail(scope.row)">
+                  <b-icon name="doubleright"></b-icon>
+                  {{ scope.row.name }}
+                </span>
+                </template>
+              </b-table>
+
+            </div>
+            <div class="bot">
+              <div class="chartTitle">信用等级分布</div>
+              <div id="ringChart1">
+              </div>
+            </div>
+          </div>
+          <div class="block-inner dipan">
+            <div class="top">
+              <p class="block-title">
+                <span>重点企业</span>
+                <span class="select-tip" v-show="!more2" @click="showModal('more2')">更多 ></span>
+              </p>
+              <div class="msg-bar" flex="main:justify-a">
+                <span class="bar-inner" flex>
+                  <img src="../images/icon-country.png" alt="">
+                  <span>
+                    <p>{{msgBarData.grow?msgBarData.grow.comCount:'数据暂无'}}</p>
+                    <p>企业数量</p>
+                  </span>
+                </span>
+                <span class="bar-inner" flex>
+                  <img src="../images/icon-streets.png" alt="">
+                  <span>
+                    <p>{{msgBarData.ipt?msgBarData.ipt.msgCount:'数据暂无'}}</p>
+                    <p>信息总量</p>
+                  </span>
+                </span>
+              </div>
+              <b-table :columns="iptComCol"
+                       :data="iptComData.slice(0,5)" border disabled-hover>
+                <template v-slot:name="scope">
+                <span class="blue2 pointer t-ellipsis"
+                      @click="showIptComDetail(scope.row)">
+                  <b-icon name="doubleright"></b-icon>
+                  {{ scope.row.name }}
+                </span>
+                </template>
+              </b-table>
+
+            </div>
+            <div class="bot">
+              <div class="chartTitle">信用等级分布</div>
+              <div id="ringChart2">
+              </div>
+            </div>
+          </div>
+        </div>
+        <v-modal :rect="[1394,80,455,850]" label="重点企业" v-model="more2">
+          <b-table :columns="iptComCol"
+                   :data="iptComData" border disabled-hover>
+            <template v-slot:name="scope">
+                <span class="blue2 pointer t-ellipsis"
+                      @click="showIptComDetail(scope.row)">
+                  <b-icon name="doubleright"></b-icon>
+                  {{ scope.row.name }}
+                </span>
+            </template>
+          </b-table>
+        </v-modal>
+        <v-modal :rect="[936,80,455,850]" label="成长型企业" v-model="more1">
+          <b-table :columns="growComCol"
+                   :data="growComData" border disabled-hover>
+            <template v-slot:name="scope">
+                <span class="blue2 pointer t-ellipsis"
+                      @click="showGrowComDetail(scope.row)">
+                  <b-icon name="doubleright"></b-icon>
+                  {{ scope.row.name }}
+                </span>
+            </template>
+          </b-table>
+        </v-modal>
+        <v-modal :rect="[936,80,455,420]" label="重点企业详情"
+                 v-model="iptComContentModal" transition-name="fade-scale-move">
+          <h2 class="blue2 mb10">企业名称：{{currentRowName}}</h2>
+          <b-table :columns="[
+                { title: '措施内容', key: 'content'},
+                { title: '执行部门', key: 'dept', align: 'center' },
+              ]" :data="iptComContentData" border disabled-hover
+                   style="margin-right: 15px;">
+          </b-table>
+        </v-modal>
+        <v-modal :rect="[1394,80,455,420]" label="成长型企业详情"
+                 v-model="growComContentModal" transition-name="fade-scale-move">
+          <h2 class="blue2 mb10">企业名称：{{currentRowName}}</h2>
+          <b-table :columns="[
+                { title: '措施内容', key: 'content'},
+                { title: '执行部门', key: 'dept', align: 'center' },
+              ]" :data="growComContentData" border disabled-hover
+                   style="margin-right: 15px;">
+          </b-table>
+        </v-modal>
+      </v-block>
+      <v-block label="重点行业分析" :rect="[1930,20,1870,940]">
+        <div class="block1-2">
+          <v-full-block :rect="[25,60,885,440]">
+            <div class="table3 t-style2">
+              <p class="block-title" style="font-size: 20px;">
+                十大重点行业基本情况
+              </p>
+              <b-table size="small"
+                       class="s-table"
+                       highlight-row
+                       @on-current-change="handleRBChart3"
+                       :columns="impBase"
+                       :data="impBaseVal"
+                       border>
+              </b-table>
+              <div class="chart-title">{{chartTitle2!==''?chartTitle2+"变化趋势":impBaseVal[0].trade+"变化趋势"}}</div>
+              <div class="chart-inline pr10px" id="lineChart3">
+              </div>
+            </div>
+          </v-full-block>
+          <v-full-block :rect="[960,60,885,400]">
+            <div class="table1 bg-foot special1">
+              <h2>十大重点行业中企业平均被处罚次数</h2>
+              <div class="flex_spaceBetween">
+                <div style="width: 48%;">
+                  <b-table :columns="punish" :data="punishVal.slice(0,5)" border disabled-hover>
+                  </b-table>
+                </div>
+                <div style="width: 48%;">
+                  <b-table :columns="punish" :data="punishVal.slice(0,5)" border disabled-hover>
+                  </b-table>
+                </div>
+              </div>
+            </div>
+          </v-full-block>
+          <v-full-block :rect="[25,480,885,440]">
+            <div class="table1 t-style1">
+              <!--弹窗按钮-->
+              <div class="cp-btn" @click="showMore2 = true">更多</div>
+              <div class="cp-btn" @click="showStatModal2">
+                <img class="stat-img" src="../images/stat.png">统计
+              </div>
+              <div class="cp-btn" @click="showIptPerModal2">{{isPer2?'数据':'占比'}}</div>
+              <h2>十大重点行业信用等级分布</h2>
+              <b-table :columns="hyCreditLv" :data="hyCreditLvVal.slice(0,5)" border disabled-hover>
+
+              </b-table>
+            </div>
+          </v-full-block>
+
+          <!--统计弹窗-->
+          <v-modal style="z-index: 20" :rect="[25,60,885,850]" label="十大重点行业信用等级占比统计" v-model="showIptStatModal2">
+            <div class="chart-container" style="padding-left: 0;width: 740px">
+              <div class="innerTips">
+                <div class="t-tip2 left1" flex="main:justify">
+                  <b-checkbox-group v-model="lvIpt2">
+                    <b-checkbox label="1">
+                      <span class="tt-inner">AAA</span>
+                    </b-checkbox>
+                    <b-checkbox label="2">
+                      <span class="tt-inner">AA</span>
+                    </b-checkbox>
+                    <b-checkbox label="3">
+                      <span class="tt-inner">A+</span>
+                    </b-checkbox>
+                    <b-checkbox label="4">
+                      <span class="tt-inner">A</span>
+                    </b-checkbox>
+                    <b-checkbox label="5">
+                      <span class="tt-inner">A-</span>
+                    </b-checkbox>
+                  </b-checkbox-group>
+                </div>
+                <div class="t-tip2 left2" flex="main:justify">
+                  <b-checkbox-group v-model="lvIpt2">
+                    <b-checkbox label="6">
+                      <span class="tt-inner">B</span>
+                    </b-checkbox>
+                    <b-checkbox label="7">
+                      <span class="tt-inner">C</span>
+                    </b-checkbox>
+                    <b-checkbox label="8">
+                      <span class="tt-inner">D</span>
+                    </b-checkbox>
+                  </b-checkbox-group>
+                </div>
+              </div>
+              <div class="chart-inline" id="barChart6">
+              </div>
+              <div class="chart-inline">
+                <ul class="chart-tip" style="width: 160px;line-height: 52px;">
+                  <li class="ci-item">1行业</li>
+                  <li class="ci-item">2行业</li>
+                  <li class="ci-item">3行业</li>
+                  <li class="ci-item">4行业</li>
+                  <li class="ci-item">5行业</li>
+                  <li class="ci-item">6行业</li>
+                  <li class="ci-item">7行业</li>
+                  <li class="ci-item">8行业</li>
+                  <li class="ci-item">9行业</li>
+                  <li class="ci-item">10行业</li>
+                </ul>
+              </div>
+              <div class="chart-inline" id="barChart7">
+              </div>
+            </div>
+          </v-modal>
+          <!-- 更多-->
+          <v-modal style="z-index: 20" :rect="[25,70,885,850]" label="更多" v-model="showMore2">
+            <div class="table1 t-style1">
+              <!--弹窗按钮-->
+              <h2>十大重点行业信用等级分布</h2>
+              <b-table :columns="hyCreditLv" :data="hyCreditLvVal" border disabled-hover>
+
+              </b-table>
+            </div>
+          </v-modal>
+
+          <v-full-block :rect="[960,480,885,440]">
+            <div class="table3 t-style2 special2">
+              <div class="cp-btn" @click="showIptPerModal3">{{isPer3?'数据':'占比'}}</div>
+              <h2 class="bg-title-none">十大重点行业红、黑名单占比</h2>
+              <b-table size="small"
+                       class="s-table"
+                       highlight-row
+                       @on-current-change="handleRBChart2"
+                       :columns="rbNameListPerc"
+                       :data="rbNameListPercVal"
+                       border>
+              </b-table>
+              <p class="add">注：数据来源于2019年</p>
+              <div class="chart-title">{{chartTitle1!==''?chartTitle1+"变化趋势":rbNameListPercVal[0].trade+"变化趋势"}}</div>
+              <div class="chart-inline pr10px" id="lineChart2">
+              </div>
+            </div>
+          </v-full-block>
+        </div>
+      </v-block>
+    </div>
+  </div>
+  <!--</b-scrollbar>-->
+</div>
+<script src="../js/components/v-header.js"></script>
+<script src="../js/components/v-block.js"></script>
+<script src="../js/components/v-full-block.js"></script>
+<script src="../js/components/v-chart-bar.js"></script>
+<script src="../js/components/v-modal.js"></script>
+<script src="../js/lib/echarts/extension/bmap.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mf9v9D2wro0QuBfsuhPl8wltrwcFSZqX"></script>
+<!--荣成的数据标志-->
+<script src="../js/lib/echarts/rcGeoCoord.js"></script>
+<!--测试模拟请求-->
+<script src="../js/lib/utils/mock.js"></script>
+<script src="../mock/mockIndex2-3.js"></script>
+<script src="../mock/mockIndex3.js"></script>
+<script src="../mock/mockIndex4.js"></script>
+
+<script>
+  var corp = [54800, 22486, 22486]
+  // 格式转换，把镇街数据转换为带坐标的数据
+  var convertData = function (data) {
+    var res = []
+    for (var i = 0; i < data.length; i++) {
+      var geoCoord = geoCoordMap[data[i].name]
+      if (geoCoord) {
+        res.push({
+          name: data[i].name,
+          value: geoCoord.concat(data[i].value),
+          row: data[i]
+        })
+      }
+    }
+    return res
+  }
+  var vm = new Vue({
+    el: '#app',
+    watch: {
+      lvIpt: function (next) {
+        //请求方法
+        axios.post('http://test/api1', {
+          arr: next
+        })
+          .then(function (res) {
+            vm.renderBarChart4(res.data.redData)//vm.renderBarChart4(data);传入data参数渲染
+            vm.renderBarChart5(res.data.blackData)
+            // console.log(res.data.redData);
+            // console.log(res.data.blackData);
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      },
+      lvIpt2: function (next) {
+        //请求方法
+        axios.post('http://test/api2', {
+          arr: next
+        })
+          .then(function (res) {
+            vm.renderBarChart6(res.data.redData6)//vm.renderBarChart4(data);传入data参数渲染
+            vm.renderBarChart7(res.data.blackData7)
+            console.log(res.data.redData6)
+            console.log(res.data.blackData7)
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      }
+    },
+    data: function () {
+      return {
+        lvIpt: [],//post数组
+        lvIpt2: [],
+        lvIptPercR: [10, 20, 30, 40],//返回数据塞到
+        lvIptPercB: [40, 30, 20, 10],
+        barChartData6: [5, 5, 10, 20, 10, 10, 15, 5, 10, 10],
+        barChartData7: [8, 2, 8, 21, 10, 10, 15, 5, 10, 10],
+
+        chartTitle1: '',
+        chartTitle2: '',
+
+        // 右页
+        //表1重点行业基本情况
+        lineData3: [200, 802, 603, 704, 606, 1007],//折线图数据
+        impBase: [
+          { title: '排名', width: 60, key: 'index', align: 'center' },
+          { title: '行业名称', width: 200, key: 'trade', align: 'center' },
+          { title: '企业数量', width: 97, key: 'count', align: 'center' },
+          { title: '信用指数', width: 97, key: 'per', align: 'center' }
+        ],//表头数据
+        impBaseVal: [
+          {
+            index: '1',
+            trade: '建筑',
+            count: '999',
+            per: '888',
+            _highlight: true,
+            chartData: [200, 404, 408, 503, 402, 1009]
+          },
+          {
+            index: '2',
+            trade: '渔业',
+            count: '999',
+            per: '888',
+            chartData: [999, 404, 408, 503, 402, 900]
+          },
+          {
+            index: '3',
+            trade: '旅游业',
+            count: '999',
+            per: '888',
+            chartData: [888, 404, 408, 503, 402, 800]
+          },
+          {
+            index: '4',
+            trade: '建筑',
+            count: '999',
+            per: '888',
+            chartData: [777, 404, 408, 503, 402, 700]
+          },
+          {
+            index: '5',
+            trade: '渔业',
+            count: '999',
+            per: '888',
+            chartData: [666, 404, 408, 503, 402, 600]
+          },
+          {
+            index: '6',
+            trade: '旅游业',
+            count: '999',
+            per: '888',
+            chartData: [444, 404, 408, 503, 402, 500]
+          },
+          {
+            index: '7',
+            trade: '建筑',
+            count: '999',
+            per: '888',
+            chartData: [200, 404, 408, 503, 402, 400]
+          },
+          {
+            index: '8',
+            trade: '渔业',
+            count: '999',
+            per: '888',
+            chartData: [200, 404, 408, 503, 402, 200]
+          },
+          {
+            index: '9',
+            trade: '旅游业',
+            count: '999',
+            per: '888',
+            chartData: [200, 404, 408, 503, 402, 1009]
+          },
+          {
+            index: '10',
+            trade: '旅游业',
+            count: '999',
+            per: '888',
+            chartData: [200, 404, 408, 503, 402, 1009]
+          }
+        ],//表内
+        //表2被处罚次数(弹窗:更多)
+        punish: [
+          { title: '排名', key: 'index', width: '50px', align: 'center' },
+          { title: '行业名称', key: 'trade', width: '135px', align: 'center' },
+          { title: '企业数量', key: 'count', width: '99px', align: 'center' },
+          { title: '平均被处罚次数（每百家）', key: 'average', width: '140px', align: 'center' }
+        ],//表头数据
+        punishVal: [
+          {
+            index: '1',
+            trade: '运输行业',
+            count: '2000',
+            average: '22'
+          },
+          {
+            index: '2',
+            trade: '运输行业',
+            count: '1800',
+            average: '10'
+          },
+          {
+            index: '3',
+            trade: '运输行业',
+            count: '1790',
+            average: '9'
+          },
+          {
+            index: '4',
+            trade: '运输行业',
+            count: '1600',
+            average: '8'
+          },
+          {
+            index: '5',
+            trade: '运输行业',
+            count: '1500',
+            average: '6'
+          }
+        ],
+        //表3 行业信用等级(弹窗:统计表格6、7；更多)
+        hyCreditLv: [
+          { title: '信用等级', key: 'list', width: '150px', align: 'center' },
+          { title: 'AAA', key: 'lv8', align: 'center' },
+          { title: 'AA', key: 'lv7', align: 'center' },
+          { title: 'A+', key: 'lv6', align: 'center' },
+          { title: 'A', key: 'lv5', align: 'center' },
+          { title: 'A-', key: 'lv4', align: 'center' },
+          { title: 'B', key: 'lv3', align: 'center' },
+          { title: 'C', key: 'lv2', align: 'center' },
+          { title: 'D', key: 'lv1', align: 'center' }
+        ],
+        hyCreditLvVal: [
+          {
+            list: '运输行业',
+            lv8: '1050',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '餐饮行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '服务行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '保险行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '互联网行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '运输行业',
+            lv8: '1050',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '餐饮行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '服务行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '保险行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '互联网行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          }
+        ],//默认十大重点行业信用等级分布
+        hyCreditLvVal1: [
+          {
+            list: '运输行业',
+            lv8: '1050',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '餐饮行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '服务行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '保险行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '互联网行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '运输行业',
+            lv8: '1050',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '餐饮行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '服务行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '保险行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          },
+          {
+            list: '互联网行业',
+            lv8: '1049',
+            lv7: '1045',
+            lv6: '1044',
+            lv5: '1044',
+            lv4: '1044',
+            lv3: '1044',
+            lv2: '1044',
+            lv1: '1044'
+          }
+        ],//常规数据
+        hyCreditLvVal2: [
+          {
+            list: '运输行业',
+            lv8: '10%',
+            lv7: '10%',
+            lv6: '10%',
+            lv5: '10%',
+            lv4: '10%',
+            lv3: '10%',
+            lv2: '10%',
+            lv1: '10%'
+          },
+          {
+            list: '餐饮行业',
+            lv8: '2%',
+            lv7: '2%',
+            lv6: '2%',
+            lv5: '2%',
+            lv4: '2%',
+            lv3: '2%',
+            lv2: '2%',
+            lv1: '2%'
+          },
+          {
+            list: '服务行业',
+            lv8: '3%',
+            lv7: '3%',
+            lv6: '3%',
+            lv5: '3%',
+            lv4: '3%',
+            lv3: '3%',
+            lv2: '3%',
+            lv1: '3%'
+          },
+          {
+            list: '保险行业',
+            lv8: '3%',
+            lv7: '3%',
+            lv6: '3%',
+            lv5: '3%',
+            lv4: '3%',
+            lv3: '3%',
+            lv2: '3%',
+            lv1: '3%'
+          },
+          {
+            list: '互联网行业',
+            lv8: '3%',
+            lv7: '3%',
+            lv6: '3%',
+            lv5: '3%',
+            lv4: '3%',
+            lv3: '3%',
+            lv2: '3%',
+            lv1: '3%'
+          },
+          {
+            list: '运输行业',
+            lv8: '10%',
+            lv7: '10%',
+            lv6: '10%',
+            lv5: '10%',
+            lv4: '10%',
+            lv3: '10%',
+            lv2: '10%',
+            lv1: '10%'
+          },
+          {
+            list: '餐饮行业',
+            lv8: '2%',
+            lv7: '2%',
+            lv6: '2%',
+            lv5: '2%',
+            lv4: '2%',
+            lv3: '2%',
+            lv2: '2%',
+            lv1: '2%'
+          },
+          {
+            list: '服务行业',
+            lv8: '3%',
+            lv7: '3%',
+            lv6: '3%',
+            lv5: '3%',
+            lv4: '3%',
+            lv3: '3%',
+            lv2: '3%',
+            lv1: '3%'
+          },
+          {
+            list: '保险行业',
+            lv8: '3%',
+            lv7: '3%',
+            lv6: '3%',
+            lv5: '3%',
+            lv4: '3%',
+            lv3: '3%',
+            lv2: '3%',
+            lv1: '3%'
+          },
+          {
+            list: '互联网行业',
+            lv8: '3%',
+            lv7: '3%',
+            lv6: '3%',
+            lv5: '3%',
+            lv4: '3%',
+            lv3: '3%',
+            lv2: '3%',
+            lv1: '3%'
+          }
+        ],//百分比数据
+        //红黑名单
+        rbNameListPerc: [
+          { title: '排名', width: 62, key: 'index', align: 'center' },
+          { title: '行业名称', width: 122, key: 'trade', align: 'center' },
+          { title: '红名单', width: 90, key: 'redList', align: 'center' },
+          { title: '黑名单', width: 90, key: 'blackList', align: 'center' },
+          { title: '异常经营名录', width: 90, key: 'unusual', align: 'center' }
+        ],
+        rbNameListPercVal: [
+          {
+            index: '1',
+            trade: '建筑',
+            redList: '666',
+            blackList: '666',
+            unusual: '666',
+            _highlight: true,
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 900]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '2',
+            trade: '渔业',
+            redList: '777',
+            blackList: '777',
+            unusual: '777',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [999, 404, 408, 503, 402, 700]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 900]
+              }
+            ]
+          },
+          {
+            index: '3',
+            trade: '旅游业',
+            redList: '888',
+            blackList: '888',
+            unusual: '888',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [888, 404, 408, 503, 402, 900]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [777, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '4',
+            trade: '建筑',
+            redList: '666',
+            blackList: '666',
+            unusual: '666',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [777, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '5',
+            trade: '渔业',
+            redList: '777',
+            blackList: '777',
+            unusual: '777',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [666, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '6',
+            trade: '旅游业',
+            redList: '888',
+            blackList: '888',
+            unusual: '888',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [444, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '7',
+            trade: '建筑',
+            redList: '666',
+            blackList: '666',
+            unusual: '666',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '8',
+            trade: '渔业',
+            redList: '777',
+            blackList: '777',
+            unusual: '777',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '9',
+            trade: '旅游业',
+            redList: '888',
+            blackList: '888',
+            unusual: '888',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '10',
+            trade: '旅游业',
+            redList: '888',
+            blackList: '888',
+            unusual: '888',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          }
+        ],//默认红黑名单显示数据
+        rbNameListPercVal1: [
+          {
+            index: '1',
+            trade: '建筑',
+            redList: '666  6%',
+            blackList: '666  6%',
+            unusual: '666  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 900]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '2',
+            trade: '渔业',
+            redList: '777  6%',
+            blackList: '777  6%',
+            unusual: '777  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [999, 404, 408, 503, 402, 700]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 900]
+              }
+            ]
+          },
+          {
+            index: '3',
+            trade: '旅游业',
+            redList: '888  6%',
+            blackList: '888  6%',
+            unusual: '888  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [888, 404, 408, 503, 402, 900]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [777, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '4',
+            trade: '建筑',
+            redList: '666  6%',
+            blackList: '666  6%',
+            unusual: '666  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [777, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '5',
+            trade: '渔业',
+            redList: '777  6%',
+            blackList: '777  6%',
+            unusual: '777  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [666, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '6',
+            trade: '旅游业',
+            redList: '888  6%',
+            blackList: '888  6%',
+            unusual: '888  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [444, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '7',
+            trade: '建筑',
+            redList: '666  6%',
+            blackList: '666  6%',
+            unusual: '666  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '8',
+            trade: '渔业',
+            redList: '777  6%',
+            blackList: '777  6%',
+            unusual: '777  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '9',
+            trade: '旅游业',
+            redList: '888  6%',
+            blackList: '888  6%',
+            unusual: '888  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '10',
+            trade: '旅游业',
+            redList: '888  6%',
+            blackList: '888  6%',
+            unusual: '888  6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          }
+        ],//常规数据
+        rbNameListPercVal2: [
+          {
+            index: '1',
+            trade: '建筑',
+            redList: '6%',
+            blackList: '6%',
+            unusual: '6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 900]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '2',
+            trade: '渔业',
+            redList: '6%',
+            blackList: '6%',
+            unusual: '6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [999, 404, 408, 503, 402, 700]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 900]
+              }
+            ]
+          },
+          {
+            index: '3',
+            trade: '旅游业',
+            redList: '6%',
+            blackList: '6%',
+            unusual: '6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [888, 404, 408, 503, 402, 900]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [777, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '4',
+            trade: '建筑',
+            redList: '6%',
+            blackList: '6%',
+            unusual: '6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [777, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 800]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 700]
+              }
+            ]
+          },
+          {
+            index: '5',
+            trade: '渔业',
+            redList: '6%',
+            blackList: '6%',
+            unusual: '6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [666, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '6',
+            trade: '旅游业',
+            redList: '6%',
+            blackList: '6%',
+            unusual: '88%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [444, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '7',
+            trade: '建筑',
+            redList: '6%',
+            blackList: '6%',
+            unusual: '6%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '8',
+            trade: '渔业',
+            redList: '77%',
+            blackList: '7%',
+            unusual: '77%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '9',
+            trade: '旅游业',
+            redList: '8%',
+            blackList: '88%',
+            unusual: '8%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          },
+          {
+            index: '10',
+            trade: '旅游业',
+            redList: '88%',
+            blackList: '8%',
+            unusual: '8%',
+            chartData: [
+              {
+                name: '红名单',
+                type: 'line',
+                data: [200, 404, 408, 503, 402, 1009]
+              },
+              {
+                name: '黑名单',
+                type: 'line',
+                data: [400, 705, 502, 609, 304, 1001]
+              },
+              {
+                name: '异常经营占比',
+                type: 'line',
+                data: [300, 802, 603, 704, 606, 1007]
+              }
+            ]
+          }
+        ],//百分比数据
+        lineData2: [
+          {
+            label: { show: 'true', position: 'top', color: '#fff' },
+            name: '红名单',
+            type: 'line',
+            data: [100, 404, 408, 503, 402, 1009]
+          },
+          {
+            label: { show: 'true', position: 'top', color: '#fff' },
+            name: '黑名单',
+            type: 'line',
+            data: [300, 705, 502, 609, 304, 1001]
+          },
+          {
+            label: { show: 'true', position: 'top', color: '#fff' },
+            name: '异常经营占比',
+            type: 'line',
+            data: [200, 802, 603, 704, 606, 1007]
+          }
+        ],// 图表数据 红黑名单
+        barData2: { count: [5, 10, 15, 20, 20, 15, 10, 5], percent: [20, 18, 16, 14, 12, 10, 7, 3] },
+        barData3: { count: [5, 10, 15, 20, 20, 15, 10, 5], percent: [7, 7, 6, 12, 14, 16, 18, 20] },
+
+        dyFlag: true,
+        corp: corp,
+        deptSub: deptSub,
+
+        showHyCreditModal: false,//行业信用等级弹窗flag
+        showIptStatModal1: false,//统计弹窗1flag
+        showIptStatModal2: false,//统计弹窗2flag
+        showMore1: false,//更多弹窗1flag
+        showMore2: false,//更多弹窗1flag
+        isPer1: false,//占比数据切换
+        isPer2: false,//占比数据切换
+        isPer3: false,//占比数据切换
+        isPer4: false,//占比数据切换
+
+        countriesData: {
+          comsCols: [
+            { title: '信用等级', key: 'lv', align: 'center' },
+            { title: '占比', key: 'perc', align: 'center' },
+            { title: '人数', key: 'count', align: 'center' }
+          ],
+          comsData: [],
+          persCols: [
+            { title: '信用等级', key: 'lv', align: 'center' },
+            { title: '占比', key: 'perc', align: 'center' },
+            { title: '人数', key: 'count', align: 'center' }
+          ],
+          persData: []
+        },
+        persData: 26681900,
+        comsData: 26213590,
+        more1: false,
+        more2: false,
+        growComCol: [
+          { title: '企业名', slot: 'name' },
+          { title: '信息量', key: 'msgCount', align: 'center' },
+          { title: '信用分', key: 'creditRank', align: 'center' }
+        ],
+        growComData: [],
+        iptComCol: [
+          { title: '企业名', slot: 'name' },
+          { title: '信息量', key: 'msgCount', align: 'center' },
+          { title: '信用分', key: 'creditRank', align: 'center' }
+        ],
+        iptComData: [],
+        msgBarData: {},
+        growComContentData: [],
+        iptComContentData: [],
+        growComContentModal: false,
+        iptComContentModal: false,
+        currentRowName: [],
+        ringChart1: [],
+        ringChart2: []
+      }
+    },
+    created: function () {
+      this.getData()
+    },
+    mounted: function () {
+      this.renderLineAreaChart()
+      this.renderLineChart2(this.lineData2)
+      this.renderLineChart3(this.lineData3)
+      this.getMapData()
+    },
+    corp: corp,
+    computed: {
+      persCount () {
+        var arr = this.persData.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      },
+      allCityPeople: function () {
+        var arr = this.peopleTotal.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      },
+      allData: function () {
+        var arr = this.dataTotal.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      },
+      deptSubFormat: function () {
+        if (this.deptSubData.length === 0) {
+          return []
+        }
+        var max = this.deptSubData[0].num
+        return this.deptSubData.map(function (item) {
+          return {
+            name: item.dept,
+            value: item.num,
+            percent: item.num / max * 100,
+            label: item.num
+          }
+        })
+      },
+      streetSubFormat: function () {
+        if (this.streetSubData.length === 0) {
+          return []
+        }
+        var max = this.streetSubData[0].num
+        return this.streetSubData.map(function (item) {
+          return {
+            name: item.dept,
+            value: item.num,
+            percent: item.num / max * 100,
+            label: item.num
+          }
+        })
+      },
+      industryTop5: function () {
+        return this.industryTop.slice(0, 5)
+      }
+    },
+    methods: {
+      // 地图渲染
+      renderMap: function () {
+        var _self = this
+        this.mapChart = echarts.init(document.getElementById('rcMapChart'))
+        // 指定图表的配置项和数据
+        var cData = convertData(this.zhenData)
+        // console.log(this.zhenData)
+        // console.log(cData)
+        var option = {
+          tooltip: {
+            trigger: 'item',
+            formatter: function (param) {
+              return param.data.name + '，信用指数：' + param.data.value[2]
+            }
+          },
+          bmap: {
+            center: [122.279306, 37.20394],
+            zoom: 11,
+            roam: false,
+            mapStyle: {
+              'styleJson': [
+                {
+                  'featureType': 'water',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#031628'
+                  }
+                },
+                {
+                  'featureType': 'land',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#08304a'
+                  }
+                },
+                {
+                  'featureType': 'highway',
+                  'elementType': 'all',
+                  'stylers': {
+                    'visibility': 'off'
+                  }
+                },
+                {
+                  'featureType': 'arterial',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'arterial',
+                  'elementType': 'geometry.stroke',
+                  'stylers': {
+                    'color': '#0b3d51'
+                  }
+                },
+                {
+                  'featureType': 'local',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'railway',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'railway',
+                  'elementType': 'geometry.stroke',
+                  'stylers': {
+                    'color': '#08304b'
+                  }
+                },
+                {
+                  'featureType': 'subway',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'lightness': -70
+                  }
+                },
+                {
+                  'featureType': 'building',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'all',
+                  'elementType': 'labels.text.fill',
+                  'stylers': {
+                    'color': '#857f7f'
+                  }
+                },
+                {
+                  'featureType': 'all',
+                  'elementType': 'labels.text.stroke',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'building',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#022338'
+                  }
+                },
+                {
+                  'featureType': 'green',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#062032'
+                  }
+                },
+                {
+                  'featureType': 'boundary',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#465b6c'
+                  }
+                },
+                {
+                  'featureType': 'manmade',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#022338'
+                  }
+                },
+                {
+                  'featureType': 'label',
+                  'elementType': 'all',
+                  'stylers': {
+                    'visibility': 'off'
+                  }
+                }
+              ]
+            }
+          },
+
+          series: [
+            {
+              type: 'effectScatter',
+              coordinateSystem: 'bmap',
+              showEffectOn: 'render',
+              symbolSize: function (v) { // 标准大小
+                return 15 + v[0] / 2500
+              },
+              rippleEffect: {
+                brushType: 'stroke',
+                scale: 3
+              },
+              label: {
+                normal: {
+                  formatter: '{b}',
+                  position: 'top',
+                  show: true
+                }
+              },
+              itemStyle: {
+                color: '#2ed7ff'
+              },
+              data: cData
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        this.mapChart.setOption(option)
+        this.mapChart.on('click', function (params) {
+          // 深拷贝当前选中行
+          _self.zhenRowClick(params.data.row)
+        })
+      },
+      // 显示更多事件
+      showModal (str) {
+        this.more1 = false
+        this.more2 = false
+        this[str] = true
+      },
+      toggleDyFlag: function () {
+        vm.dyFlag = !vm.dyFlag
+        var data2 = vm.dyFlag ? this.barData2.count : this.barData2.percent,
+          data3 = vm.dyFlag ? this.barData3.count : this.barData3.percent
+        vm.renderBarChart2(data2, this.dyFlag)
+        vm.renderBarChart3(data3, this.dyFlag)
+      },
+      showStatModal1: function () {
+        vm.showIptStatModal1 = true
+        this.$nextTick(
+          function () {
+            vm.renderBarChart4(vm.lvIptPercR)
+            vm.renderBarChart5(vm.lvIptPercB)
+          }
+        )
+      },
+      showStatModal2: function () {
+        vm.showIptStatModal2 = true
+        this.$nextTick(
+          function () {
+            vm.renderBarChart6(vm.barChartData6)
+            vm.renderBarChart7(vm.barChartData7)
+          }
+        )
+      },
+      showIptPerModal1: function () {
+        /*(暂不处理)数据百分比处理
+        for(var i = 0; i<4;i++){
+          console.log(vm.iptCreditLvVal[i].lv1);
+          var item = vm.iptCreditLvVal[i]
+          for(var j = 0;j<8;j++){
+            var key = 'lv'+(j+1)
+            console.log(item[key]);
+            item[key]=item[key]/100 + '%'
+          }
+        }
+        */
+        vm.isPer1 = !vm.isPer1
+        vm.isPer1 ? vm.iptCreditLvVal = vm.iptCreditLvVal2 : vm.iptCreditLvVal = vm.iptCreditLvVal1
+      },
+      showIptPerModal2: function () {
+        vm.isPer2 = !vm.isPer2
+        vm.isPer2 ? vm.hyCreditLvVal = vm.hyCreditLvVal2 : vm.hyCreditLvVal = vm.hyCreditLvVal1
+      },
+      showIptPerModal3: function () {
+        vm.isPer3 = !vm.isPer3
+        vm.isPer3 ? vm.rbNameListPercVal = vm.rbNameListPercVal2 : vm.rbNameListPercVal = vm.rbNameListPercVal1
+      },
+      //党员百分比切换
+      showIptPerModal4: function (row) {
+        vm.isPer4 = !vm.isPer4
+        vm.isPer4 ? vm.dyCreditLvVal = vm.dyCreditLvVal2 : vm.dyCreditLvVal = vm.dyCreditLvVal1
+      },
+      handleRBChart2: function (row) {
+        this.renderLineChart2(row.chartData)
+        vm.chartTitle1 = row.trade
+      },
+      handleRBChart3: function (row) {
+        this.renderLineChart3(row.chartData)
+        vm.chartTitle2 = row.trade
+      },
+
+      renderLineChart2: function (series) {
+        var myChart = echarts.init(document.getElementById('lineChart2'))
+        var option = {
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            icon: 'circle',
+            bottom: 30,
+            textStyle: {
+              color: '#7893ad'
+            },
+            data: ['红名单', '黑名单', '异常经营占比']
+          },
+          color: ['#d20f60', '#3f5ee4', '#ffea68', '#1bd5c0'],
+          grid: {
+            top: 20,
+            right: 5,
+            bottom: 90
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: { color: '#8fa0cd' }
+            },
+            splitLine: {
+              show: true,
+              lineStyle: { color: '#0f1534' }
+            },
+            type: 'category',
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: {
+              show: true,
+              lineStyle: { color: '#8fa0cd' }
+            },
+            splitLine: {
+              show: true,
+              lineStyle: { color: '#0f1534' }
+            }
+          },
+          series: series
+        }
+        myChart.setOption(option)
+      },
+      renderLineChart3: function (data) {
+        var myChart = echarts.init(document.getElementById('lineChart3'))
+        var option = {
+          tooltip: {
+            trigger: 'axis'
+          },
+          color: ['#3f5ee4'],
+          grid: {
+            top: 20,
+            right: 5,
+            bottom: 90
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: { color: '#8fa0cd' }
+            },
+            splitLine: {
+              show: true,
+              lineStyle: { color: '#0f1534' }
+            },
+            type: 'category',
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: {
+              show: true,
+              lineStyle: { color: '#8fa0cd' }
+            },
+            splitLine: {
+              show: true,
+              lineStyle: { color: '#0f1534' }
+            }
+          },
+          series: {
+            type: 'line',
+            data: data,
+            label: {
+              show: true,
+              position: 'top',
+              color: '#fff'
+            }
+          }
+        }
+        myChart.setOption(option)
+      },
+
+      renderBarChart6: function (data) {
+        var myChart = echarts.init(document.getElementById('barChart6'))
+        // 指定图表的配置项和数据
+        var option = {
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            show: false,
+            inverse: true,
+            type: 'value'
+          },
+          yAxis: {
+            show: false,
+            type: 'category',
+            data: ['行业1', '行业2', '行业3', '行业4', '行业5', '行业6', '行业7', '行业8', '行业9', '行业10']
+          },
+          series: [
+            {
+              label: {
+                normal: {
+                  show: true,
+                  position: 'left',
+                  color: '#fff',
+                  formatter: '{c}%'
+                }
+              },
+              type: 'bar',
+              barGap: '14%',
+              data: data,
+              barMaxWidth: 14,
+              itemStyle: {
+                color: '#d20f60',
+                barBorderRadius: [7, 7, 7, 7]
+              }
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      renderBarChart7: function (data) {
+        var myChart = echarts.init(document.getElementById('barChart7'))
+        // 指定图表的配置项和数据
+        var option = {
+          grid: { left: '-8%', right: '10%', bottom: '3%', containLabel: true },
+          xAxis: { show: false, type: 'value' },
+          yAxis: {
+            show: false, axisLine: { show: false }, axisTick: { show: false }, type: 'category',
+            data: ['行业1', '行业2', '行业3', '行业4', '行业5', '行业6', '行业7', '行业8', '行业9', '行业10']
+          },
+          series: [
+            {
+              label: {
+                normal: {
+                  show: true,
+                  position: 'right',
+                  color: '#fff',
+                  formatter: '{c}%'
+                }
+              },
+              type: 'bar',
+              barGap: '14%',
+              data: data,
+              barMaxWidth: 14,
+              itemStyle: {
+                color: '#0f36ac',
+                barBorderRadius: [7, 7, 7, 7]
+              }
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      renderLineAreaChart: function () {
+        var myChart = echarts.init(document.getElementById('lineAreaChart'))
+        option = {
+          color: ['#033bbe'],
+          xAxis: {
+            type: 'category',
+            boundaryGap: 4,
+            data: [2014, 2015, 2016, 2017, 2018, 2019],
+            axisLabel: {
+              color: '#596389',
+              align: 'center'
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#596389'
+              }
+            },
+            splitLine: { show: false }
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              color: '#596389'
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#596389'
+              }
+            },
+            splitLine: { show: false }
+          },
+          series: [{
+            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: 'line',
+            areaStyle: {}
+          }]
+        }
+        myChart.setOption(option)
+      },
+      // 指标项分布
+      renderRing (id, data) {
+        var myChart = echarts.init(document.getElementById(id))
+        var option = {
+          grid: {
+            top: '40%',
+            left: '40%',
+            containLabel: true
+          },
+          color: ['#01c9fd', '#ff8f5f', '#6ec26e', '#fc5976',
+            '#ae74f3', '#ff7391', '#ffb759', '#4c83ff',
+            '#60daab', '#fffd08', '#467aff', '#ff7ab7'],
+          tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+              var str = params.seriesName + '</br>' +
+                params.marker + '' + params.data.legendName + '</br>' +
+                '数量：' + params.data.value + '</br>' +
+                '占比：' + params.percent + '%'
+              return str
+            }
+          },
+          legend: { show: false },
+          series: [
+            {
+              name: '标题',
+              type: 'pie',
+              radius: ['20%', '55%'],
+              center: ['50%', '55%'],
+              clockwise: false, //饼图的扇区是否是顺时针排布
+              avoidLabelOverlap: false,
+              label: {
+                normal: {
+                  show: true,
+                  formatter: function (params) {
+                    return params.data.legendName
+                  },
+                  textStyle: {
+                    color: 'rgba(255, 255, 255, 1)'
+                  }
+                }
+              },
+              labelLine: {
+                normal: {
+                  length: 12,
+                  length2: 3
+                }
+              },
+              data: data
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      getData () {
+        var _self = this
+        axios.get('/getCountriesData').then(function (res) {
+          _self.countriesData.comsData = res.data.coms
+          _self.countriesData.persData = res.data.pers
+        })
+        axios.get('/getDataBase2').then(function (res) {
+          _self.growComData = res.data.comsDataList1
+          _self.iptComData = res.data.comsDataList2
+          _self.renderRing(id = 'ringChart1', data = res.data.ringChartData)
+          _self.renderRing(id = 'ringChart2', data = res.data.ringChartData)
+        })
+        axios.get('/getMsgBarData').then(function (res) {
+          _self.msgBarData = res.data.msgBarData
+        })
+      },
+      showGrowComDetail (row) {
+        var _self = this
+        this.currentRowName = row.name
+        axios.get('/detail', row.name).then(function (res) {
+          _self.growComContentData = res.data
+          _self.growComContentModal = true
+          _self.iptComContentModal = false
+          _self.more2 = false
+        })
+      },
+      showIptComDetail (row) {
+        var _self = this
+        this.currentRowName = row.name
+        axios.get('/detail', row.name).then(function (res) {
+          console.log(res)
+          _self.iptComContentData = res.data
+          _self.iptComContentModal = true
+          _self.growComContentModal = false
+          _self.more1 = false
+        })
+      },
+      renderMap: function () {
+        var _self = this
+        this.mapChart = echarts.init(document.getElementById('rcMapChart'))
+        // 指定图表的配置项和数据
+        var cData = convertData(_self.zhenData)
+        var option = {
+          tooltip: {
+            trigger: 'item',
+            formatter: function (param) {
+              return '<p style="font-size: 20px">' + param.data.name + '</p>'
+                + '<br>人口总数：' + param.data.row.total
+                + '<br><p style="color: #00d7ff">信用指数：' + param.data.row.value + '</p>'
+                + '五星：' + param.data.row.s0
+                + '<br>四星：' + param.data.row.s1
+                + '<br>三星：' + param.data.row.s2
+                + '<br>二星：' + param.data.row.s3
+                + '<br>一星：' + param.data.row.s4
+            },
+            backgroundColor: 'rgba(19,33,63,0.9);',
+            padding: 20
+          },
+          bmap: {
+            center: [122.409906, 37.12394],
+            zoom: 11,
+            roam: false,
+            mapStyle: {
+              'styleJson': [
+                {
+                  'featureType': 'water',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#031628'
+                  }
+                },
+                {
+                  'featureType': 'land',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#08304a'
+                  }
+                },
+                {
+                  'featureType': 'highway',
+                  'elementType': 'all',
+                  'stylers': {
+                    'visibility': 'off'
+                  }
+                },
+                {
+                  'featureType': 'arterial',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'arterial',
+                  'elementType': 'geometry.stroke',
+                  'stylers': {
+                    'color': '#0b3d51'
+                  }
+                },
+                {
+                  'featureType': 'local',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'railway',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'railway',
+                  'elementType': 'geometry.stroke',
+                  'stylers': {
+                    'color': '#08304b'
+                  }
+                },
+                {
+                  'featureType': 'subway',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'lightness': -70
+                  }
+                },
+                {
+                  'featureType': 'building',
+                  'elementType': 'geometry.fill',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'all',
+                  'elementType': 'labels.text.fill',
+                  'stylers': {
+                    'color': '#857f7f'
+                  }
+                },
+                {
+                  'featureType': 'all',
+                  'elementType': 'labels.text.stroke',
+                  'stylers': {
+                    'color': '#000000'
+                  }
+                },
+                {
+                  'featureType': 'building',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#022338'
+                  }
+                },
+                {
+                  'featureType': 'green',
+                  'elementType': 'geometry',
+                  'stylers': {
+                    'color': '#062032'
+                  }
+                },
+                {
+                  'featureType': 'boundary',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#465b6c'
+                  }
+                },
+                {
+                  'featureType': 'manmade',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#022338'
+                  }
+                },
+                {
+                  'featureType': 'label',
+                  'elementType': 'all',
+                  'stylers': {
+                    'visibility': 'off'
+                  }
+                }
+              ]
+            }
+          },
+          series: [
+            {
+              type: 'effectScatter',
+              coordinateSystem: 'bmap',
+              showEffectOn: 'render',
+              symbolSize: function (v) { // 标准大小
+                return 15 + v[0] / 2500
+              },
+              rippleEffect: {
+                brushType: 'stroke',
+                scale: 3
+              },
+              label: {
+                normal: {
+                  formatter: '{b}',
+                  position: 'top',
+                  show: true
+                }
+              },
+              itemStyle: {
+                color: '#2ed7ff'
+              },
+              data: cData
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        this.mapChart.setOption(option)
+        this.mapChart.on('click', function (params) {
+          // 深拷贝当前选中行
+          //_self.zhenRowClick(params.data.row)
+          console.log(params.data.row)
+        })
+      },
+      getMapData: function () {
+        var _self = this
+        axios.get('/getMapData').then(function (res) {
+          _self.zhenData = res.data.data
+          _self.renderMap()
+        })
+      }
+    }
+  })
+</script>
+</body>
+</html>

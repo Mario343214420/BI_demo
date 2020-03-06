@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>荣成大数据首页</title>
+  <!--required-->
+  <!--核心库、动画库、请求库-->
+  <script src="../js/lib/vue.min.js"></script>
+  <script src="../js/lib/utils/axios.min.js"></script>
+  <!--required end-->
+  <!--第三方库和自己编写的插件-->
+  <!--bin-ui-->
+  <link rel="stylesheet" href="../js/lib/bin-ui/styles/index.css">
+  <script src="../js/lib/bin-ui/bin-ui.umd.min.js"></script>
+  <!--charts-->
+  <script src="../js/lib/echarts/echarts.min.js"></script>
+  <!--self-->
+  <link rel="stylesheet" href="../styles/index.css">
+  <link rel="stylesheet" href="../styles/reset.css">
+  <link rel="stylesheet" href="../styles/update.css">
+</head>
+<body>
+<div id="app" v-cloak>
+  <!--<b-scrollbar style="height:100%;">-->
+  <div class="screen-wrapper">
+    <v-header label="荣成市社会信用综合分析平台">
+      <a href="index.html" class="active">全市信用综合分析平台</a>
+      <a href="index2.html">重点人群重点行业分析</a>
+      <a href="index3.html">专项应用分析</a>
+    </v-header>
+    <div class="main">
+      <v-block label="全市人口基本情况" :rect="[40,20,460,462]">
+        <div class="block1-1">
+          <div class="top mb15 o-hide" flex>
+            <span class="total t-justify">全市人口总数</span>
+            <div class="number" v-html="allCityPeople"></div>
+            <span class="ren">人</span>
+          </div>
+          <div flex="main:justify wrap:wrap" class="mb10">
+            <div class="box">
+              <h2>601710</h2>
+              <p>本地人口 (人)</p>
+            </div>
+            <div class="box">
+              <h2>213939</h2>
+              <p>外来人口 (人)</p>
+            </div>
+            <div class="box">
+              <h2>22</h2>
+              <p>本市镇街数量 (个)</p>
+            </div>
+            <div class="box">
+              <h2>946</h2>
+              <p>本市村居数量 (个)</p>
+            </div>
+          </div>
+          <h2>全市法人基本情况</h2>
+          <div class="charts" flex="main:justify">
+            <div class="ring">
+              <div id="ringChart" style="width: 220px;height: 180px;margin-top: -10px;"></div>
+            </div>
+            <div flex-box="1">
+              <h2>法人总数(个)</h2>
+              <h4 class="font24 blue1">77286</h4>
+              <p class="item">
+                <span class="icon" style="background-color:#0f36ac;"></span>
+                <span class="label t-justify">企业法人:</span>
+                <span class="fff">{{corp[0]}}</span> 个
+              </p>
+              <p class="item">
+                <span class="icon" style="background-color:#0b87ed;"></span>
+                <span class="label t-justify">个体工商户:</span>
+                <span class="fff">{{corp[1]}}</span> 个
+              </p>
+              <p class="item">
+                <span class="icon" style="background-color:#ffea68;"></span>
+                <span class="label t-justify">其他:</span>
+                <span class="fff">{{corp[2]}}</span> 个
+              </p>
+            </div>
+          </div>
+        </div>
+      </v-block>
+      <v-block label="数据归集情况" :rect="[40,500,460,462]">
+        <div class="block1-2">
+          <div flex="cross:bottom" class="mb20">
+            <img src="../images/icon1.png" height="60" width="60" alt="icon1"/>
+            <div flex-box="1" class="ml20">
+              <p class="font16 fff">数据归集总量</p>
+              <p><span class="number" v-html="allData"></span><span class="num">条</span></p>
+            </div>
+          </div>
+          <div class="mb5">
+            <div class="item w33 fff">信用信息总数</div>
+            <div class="item w33" style="background-color: #182547;">
+              <p class="font20 blue2">1520088</p>
+              <p>自然人信用信息</p>
+            </div>
+            <div class="item w33" style="background-color: #182547;">
+              <p class="font20">57280</p>
+              <p>法人信用信息</p>
+            </div>
+          </div>
+          <div class="mb5 mt20">
+            <div class="item icon icon1 w5">
+              <p class="font22 fff">34864</p>
+              <p>自然人正面信息</p>
+            </div>
+            <div class="item icon icon2 w5">
+              <p class="font22 fff">39593</p>
+              <p>自然人负面信息</p>
+            </div>
+          </div>
+          <div class="mb5 mt20">
+            <div class="item icon icon3 w5">
+              <p class="font22 fff">113445</p>
+              <p>法人正面信息</p>
+            </div>
+            <div class="item icon icon4 w5">
+              <p class="font22 fff">2405</p>
+              <p>法人负面信息</p>
+            </div>
+          </div>
+        </div>
+      </v-block>
+      <v-block label="部门数据报送总量排行" :rect="[520,20,460,462]">
+
+        <!--部门报送模态框-->
+        <v-modal :rect="[-2,0,462,942]" label="部门数据报送总量排行"
+                 v-model="baoSongModal1">
+          <div id="RCBS1" style="width: 418px;height:100%;">
+            <div class="top2" flex="main:center">
+              <div class="item" flex="main:justify">
+                <img src="../images/icon-top1.png" height="50" width="50" alt="top1"/>
+                <div flex-box="1">
+                  <p>{{ deptSub[0].dept }}:</p>
+                  <p class="font22 blue1">{{ deptSub[0].num }}</p>
+                </div>
+              </div>
+              <div class="item" flex="main:justify">
+                <img src="../images/icon-top2.png" height="50" width="50" alt="top1"/>
+                <div flex-box="1">
+                  <p>{{ deptSub[1].dept }}:</p>
+                  <p class="font22 blue1">{{ deptSub[1].num }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="mb10">
+
+              <!--模态框内显示长度（:max-length）-->
+              <v-chart-bar :data="deptSubFormat" :max-length="100" :start-index="3"
+                           hide-value bg-color="#232e4c" name-color="#556490"></v-chart-bar>
+            </div>
+            <p>注：当前展示部门报送数据总量</p>
+          </div>
+        </v-modal>
+        <div class="block1-3">
+
+          <!--新增更多按钮-->
+          <span class="more-add" @click="baoSongModal1=true">更多</span>
+
+          <div class="top2" flex="main:center">
+            <div class="item" flex="main:justify">
+              <img src="../images/icon-top1.png" height="50" width="50" alt="top1"/>
+              <div flex-box="1">
+                <p>{{ deptSub[0].dept }}:</p>
+                <p class="font22 blue1">{{ deptSub[0].num }}</p>
+              </div>
+            </div>
+            <div class="item" flex="main:justify">
+              <img src="../images/icon-top2.png" height="50" width="50" alt="top1"/>
+              <div flex-box="1">
+                <p>{{ deptSub[1].dept }}:</p>
+                <p class="font22 blue1">{{ deptSub[1].num }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="mb10">
+
+            <!--模态框内显示长度（:max-length）-->
+            <v-chart-bar :data="deptSubFormat" :max-length="6" :start-index="3"
+                         hide-value bg-color="#232e4c" name-color="#556490"></v-chart-bar>
+          </div>
+          <p>注：当前展示部门报送数据总量</p>
+        </div>
+      </v-block>
+      <v-block label="镇街数据报送总量排行" :rect="[520,500,460,462]">
+
+        <!--镇街报送模态框-->
+        <v-modal :rect="[-2,-480,462,942]" label="镇街数据报送总量排行"
+                 v-model="baoSongModal2">
+          <div id="RCBS2" style="width: 418px;height:100%;">
+            <div class="top2" flex="main:center">
+              <div class="item" flex="main:justify">
+                <img src="../images/icon-top1.png" height="50" width="50" alt="top1"/>
+                <div flex-box="1">
+                  <p>{{ streetSub[0].dept }}:</p>
+                  <p class="font22 blue1">{{ streetSub[0].num }}</p>
+                </div>
+              </div>
+              <div class="item" flex="main:justify">
+                <img src="../images/icon-top2.png" height="50" width="50" alt="top1"/>
+                <div flex-box="1">
+                  <p>{{ streetSub[1].dept }}:</p>
+                  <p class="font22 blue1">{{ streetSub[1].num }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="mb10">
+            <!--模态框内显示长度（:max-length）-->
+              <v-chart-bar :data="streetSubFormat" :max-length="100" :start-index="3"
+                           hide-value bg-color="#232e4c" name-color="#556490"></v-chart-bar>
+            </div>
+            <p>注：当前展示镇街报送数据总量</p>
+          </div>
+        </v-modal>
+        <div class="block1-4">
+
+          <!--新增更多按钮-->
+          <span class="more-add" @click="baoSongModal2=true">更多</span>
+
+          <div class="top2" flex="main:center">
+            <div class="item" flex="main:justify">
+              <img src="../images/icon-top1.png" height="50" width="50" alt="top1"/>
+              <div flex-box="1">
+                <p>{{ streetSub[0].dept }}:</p>
+                <p class="font22 blue1">{{ streetSub[0].num }}</p>
+              </div>
+            </div>
+            <div class="item" flex="main:justify">
+              <img src="../images/icon-top2.png" height="50" width="50" alt="top1"/>
+              <div flex-box="1">
+                <p>{{ streetSub[1].dept }}:</p>
+                <p class="font22 blue1">{{ streetSub[1].num }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="mb10">
+            <v-chart-bar :data="streetSubFormat" :max-length="6" :start-index="3"
+                         hide-value bg-color="#232e4c" name-color="#556490"></v-chart-bar>
+          </div>
+          <p>注：当前展示镇街报送数据总量</p>
+        </div>
+      </v-block>
+      <v-block label="信用评级数据分析" :rect="[1000,20,1880,944]">
+        <div class="block1-5" flex="box:mean">
+          <v-full-block :rect="[20,60,919,420]">
+            <div class="table1">
+              <div class="t" style="left:84px;">
+                <h2 class="t-center font20 blue2" style="color: #fff;">自然人等级分布</h2>
+                <ul>
+                  <li v-for="(item,index) in levelData.zrr" :key="index">
+                    <span>{{item.num}}</span><span class="fff">{{item.percent}}%</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="t" style="right:82px;">
+                <h2 class="t-center font20 blue2 fff" style="color: #fff;">法人等级分布</h2>
+                <ul>
+                  <li v-for="(item,index) in levelData.fr" :key="index">
+                    <span>{{item.num}}</span><span class="fff">{{item.percent}}%</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </v-full-block>
+          <v-full-block :rect="[20,530,919,380]">
+            <div class="table2">
+              <h2>企业信用等级top100
+                <span class="more" @click="showIndustryModal = true">更多</span>
+              </h2>
+              <b-table :columns="industryColumns" :data="industryTop5" border disabled-hover>
+                <template v-slot:name="scope">
+                  <span class="blue2 pointer" @click="showDetail(scope.row)">
+                    <b-icon name="doubleright"></b-icon>
+                    {{ scope.row.name }}
+                  </span>
+                </template>
+                <template v-slot:level="scope">
+                  <span class="blue2">{{ scope.row.level }}</span>
+                </template>
+              </b-table>
+            </div>
+          </v-full-block>
+          <!--企业信用排名Top100 弹窗-->
+          <v-modal :rect="[20,60,919,850]" label="企业信用等级Top100" v-model="showIndustryModal">
+            <b-table :columns="industryColumns" :data="industryTop" border disabled-hover style="margin-right: 20px;">
+              <template v-slot:name="scope">
+                <span class="blue2">
+                  {{ scope.row.name }}
+                </span>
+              </template>
+              <template v-slot:level="scope">
+                <span class="blue2">{{ scope.row.level }}</span>
+              </template>
+            </b-table>
+          </v-modal>
+          <!--企业详情弹窗-->
+          <v-modal :rect="[20,60,919,850]" :label="compDetail.keyTable.name" v-model="compDetailModal">
+            <div class="top-content" style="margin-right: 15px;">
+              <div class="key-table">
+                <table>
+                  <tr>
+                    <td class="key">名称</td>
+                    <td>{{ compDetail.keyTable.name }}</td>
+                    <td class="key">法定代表人</td>
+                    <td>{{ compDetail.keyTable.corporation }}</td>
+                  </tr>
+                  <tr>
+                    <td class="key">注册资金</td>
+                    <td>{{ compDetail.keyTable.regCapital }}</td>
+                    <td class="key">联系方式</td>
+                    <td>{{ compDetail.keyTable.tel }}</td>
+                  </tr>
+                  <tr>
+                    <td class="key">开业时间</td>
+                    <td>{{ compDetail.keyTable.date }}</td>
+                    <td class="key">经济性质</td>
+                    <td>{{ compDetail.keyTable.economicNature }}</td>
+                  </tr>
+                  <tr>
+                    <td class="key">统一信用代码</td>
+                    <td>{{ compDetail.keyTable.unifiedCode }}</td>
+                    <td class="key">工商注册号</td>
+                    <td>{{ compDetail.keyTable.registration }}</td>
+                  </tr>
+                  <tr>
+                    <td class="key">地址</td>
+                    <td colspan="3">{{ compDetail.keyTable.address }}</td>
+                  </tr>
+                  <tr>
+                    <td class="key">经营范围</td>
+                    <td colspan="3">{{ compDetail.keyTable.scope }}</td>
+                  </tr>
+                  <tr>
+                    <td class="key">信用等级</td>
+                    <td colspan="3">
+                      {{ compDetail.keyTable.level }}
+                      <span style="margin-left:20px;color:#ffeda1;">信用分：{{ compDetail.keyTable.score }}</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="title-info">正负面信息</div>
+              <div class="info-tab">
+                <span :class="{'active':infoTab===0}" @click="infoTab=0">正面信息 ({{ compDetail.plusData.length }})</span>
+                <span :class="{'active':infoTab===1}" @click="infoTab=1">负面信息 ({{ compDetail.minusData.length }})</span>
+              </div>
+              <!--正面信息-->
+              <div class="common-table" v-if="infoTab===0">
+                <b-table
+                    :columns="[
+                      { title: '序号', type: 'index', width: 50, align: 'center' },
+                      { title: '主体名称', key: 'name', width: 200 ,tooltip:true},
+                      { title: '统一社会信用代码', key: 'unifiedCode', width: 250 ,tooltip:true},
+                      { title: '发生日期', key: 'date',tooltip:true},
+                      { title: '描述', key: 'desc',tooltip:true},
+                      { title: '指标', key: 'index',tooltip:true},
+                      { title: '提交部门', key: 'submission',tooltip:true}
+                    ]"
+                    :data="compDetail.plusData" border disabled-hover></b-table>
+              </div>
+              <!--负面信息-->
+              <div class="common-table" v-if="infoTab===1">
+                <b-table
+                    :columns="[
+                      { title: '序号', type: 'index', width: 50, align: 'center' },
+                      { title: '主体名称', key: 'name', width: 200 ,tooltip:true},
+                      { title: '统一社会信用代码', key: 'unifiedCode', width: 250 ,tooltip:true},
+                      { title: '发生日期', key: 'date',tooltip:true},
+                      { title: '描述', key: 'desc',tooltip:true},
+                      { title: '指标', key: 'index',tooltip:true},
+                      { title: '提交部门', key: 'submission',tooltip:true}
+                    ]"
+                    :data="compDetail.minusData" border disabled-hover></b-table>
+              </div>
+            </div>
+          </v-modal>
+          <!--自然人信用指数变化趋势-->
+          <v-full-block :rect="[940,60,919,380]">
+            <div class="table3">
+              <h2 class="blue2">自然人信用指数变化趋势</h2>
+              <div id="zrrChart" style="width: 700px;height:380px;margin-left: 40px;"></div>
+            </div>
+          </v-full-block>
+          <!--企业信用指数变化趋势-->
+          <v-full-block :rect="[940,530,919,380]">
+            <div class="table3">
+              <h2 class="blue2">企业信用指数变化趋势</h2>
+              <div id="qyChart" style="width: 700px;height:380px;margin-left: 40px;"></div>
+            </div>
+          </v-full-block>
+        </div>
+        <!--移动block1-6中模态框至此-->
+        <v-modal :rect="[950,85,890,840]" label="信用查询用途分析" v-model="radar1Modal" style="padding: 30px;">
+          <div id="RCL1" style="width: 760px;height:600px;margin: 30px auto 20px;"></div>
+        </v-modal>
+        <v-modal :rect="[950,85,890,840]" label="信用报告用途分析" v-model="radar2Modal" style="padding: 30px;">
+          <div id="RCL2" style="width: 760px;height:600px;margin: 30px auto 20px;"></div>
+        </v-modal>
+        <v-modal :rect="[950,85,890,840]" label="信用查询和报告打印趋势分析" v-model="bar2Modal" style="padding: 30px;">
+          <div id="report5ChartL" style="width: 760px;height:690px;padding-top: 80px"></div>
+        </v-modal>
+      </v-block>
+      <v-block label="信用查询和报告使用情况分析" :rect="[2900, 20, 920, 944]">
+        <div class="block1-6">
+          <div class="top" flex="box:mean">
+            <div>
+              <p>信用报告查询总次数：<span class="fff font20">380075</span></p>
+              <p>报告打印次数：<span class="fff font20">1140023</span></p>
+            </div>
+            <div>
+              <p>今年信用报告查询总次数：<span class="fff font20">2130609</span></p>
+              <p>报告打印次数：<span class="fff font20">10000</span></p>
+            </div>
+          </div>
+          <div flex="box:mean">
+            <div class="left" flex="dir:top">
+              <div class="chart mb20" style="position: relative;">
+                <img class="zoom-btn" src="../images/zoomAdd.png" @click="zoomRadar1">
+                <h2 class="fff" style="font-size: 20px">信用查询用途分析</h2>
+                <div id="zrrReportChart" style="width: 380px;height:300px;"></div>
+              </div>
+              <div class="chart" style="position: relative;">
+                <img class="zoom-btn" src="../images/zoomAdd.png" @click="zoomRadar2">
+                <h2 class="fff" style="font-size: 20px">信用报告用途分析</h2>
+                <div id="frReportChart" style="width: 380px;height:300px;margin-top: 15px"></div>
+              </div>
+            </div>
+            <div class="right">
+              <div class="chart position-r">
+                <img class="zoom-btn" src="../images/zoomAdd.png" @click="zoomBar2">
+                <h2 style="color: #fff;font-size: 20px">信用查询和报告打印趋势分析</h2>
+                <div id="report5Chart" style="width: 435px;height:300px;padding-top: 20px"></div>
+              </div>
+              <div class="chart">
+                <h2 style="color: #fff;font-size: 20px" class="lingYu">各个领域受限次数
+                  <span class="more" @click="lingYuModal=true">更多</span>
+                </h2>
+                <div style="padding: 0 16px;">
+                  <b-table class="last-table" :columns="lingYuColumns" :data="lingYuDataTop7" border disabled-hover></b-table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <v-modal :rect="[464,155,430,770]" label="各领域受限次数" v-model="lingYuModal">
+            <b-table :columns="lingYuColumns" :data="lingYuData" border disabled-hover
+                     style="margin-right: 15px;"></b-table>
+          </v-modal>
+        </div>
+      </v-block>
+    </div>
+  </div>
+  <!--</b-scrollbar>-->
+</div>
+<script src="../js/components/v-header.js"></script>
+<script src="../js/components/v-block.js"></script>
+<script src="../js/components/v-full-block.js"></script>
+<script src="../js/components/v-chart-bar.js"></script>
+<script src="../js/components/v-modal.js"></script>
+<!--测试模拟请求-->
+<script src="../js/lib/utils/mock.js"></script>
+<script src="../mock/mockIndex.js"></script>
+<script>
+  var corp = [54800, 22486, 22486]
+  var deptSub = [
+    {dept: '交通部', num: 768435},
+    {dept: '公安部', num: 68553},
+    {dept: '广电局', num: 3000},
+    {dept: '社保局', num: 2999},
+    {dept: '气象局', num: 2800},
+    {dept: '工商局', num: 2700},
+    {dept: '证监局', num: 2600},
+    {dept: '民局', num: 2400},
+    {dept: '行政审批', num: 2300},
+    {dept: '食药监', num: 1002},
+  ]
+  var streetSub = [
+    {dept: '港西镇', num: 768435},
+    {dept: '寻山街道', num: 68553},
+    {dept: '城西街道', num: 3000},
+    {dept: '东山街道', num: 2999},
+    {dept: '宁津街道', num: 2800},
+    {dept: '宁津街道', num: 2700},
+    {dept: '宁津街道', num: 2224},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2700},
+    {dept: '宁津街道', num: 2224},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2700},
+    {dept: '宁津街道', num: 2224},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2700},
+    {dept: '宁津街道', num: 2224},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+    {dept: '宁津街道', num: 2121},
+    {dept: '宁津街道', num: 1002},
+    {dept: '宁津街道', num: 345},
+  ]
+  var lingYuData = [
+    {name: '领域1', count: 111},
+    {name: '领域2', count: 111},
+    {name: '领域3', count: 111},
+    {name: '领域4', count: 111},
+    {name: '领域5', count: 111},
+    {name: '领域6', count: 111},
+    {name: '领域7', count: 111},
+    {name: '领域1', count: 111},
+    {name: '领域2', count: 111},
+    {name: '领域3', count: 111},
+    {name: '领域4', count: 111},
+    {name: '领域5', count: 111},
+    {name: '领域6', count: 111},
+    {name: '领域7', count: 111},
+    {name: '领域5', count: 111},
+    {name: '领域6', count: 111},
+    {name: '领域7', count: 111},
+    {name: '领域1', count: 111},
+    {name: '领域2', count: 111},
+    {name: '领域3', count: 111},
+    {name: '领域4', count: 111},
+    {name: '领域5', count: 111},
+    {name: '领域6', count: 111},
+    {name: '领域7', count: 111}
+  ]
+  var vm = new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        peopleTotal: 8156489,
+        dataTotal: 26681900,
+        corp: corp,
+        deptSub: deptSub,
+        deptSubData: deptSub.slice(2),
+        streetSub: streetSub,
+        streetSubData: streetSub.slice(2),
+        levelData: {
+          zrr: [
+            {num: 333, percent: 5}, // AAA
+            {num: 123, percent: 10}, // AA
+            {num: 122, percent: 15}, // A+
+            {num: 223, percent: 30}, // A
+            {num: 444, percent: 20}, // A-
+            {num: 333, percent: 12}, // B
+            {num: 222, percent: 10}, // C
+            {num: 111, percent: 5} // D
+          ],
+          fr: [
+            {num: 333, percent: 5}, // AAA
+            {num: 123, percent: 10}, // AA
+            {num: 122, percent: 15}, // A+
+            {num: 223, percent: 30}, // A
+            {num: 444, percent: 20}, // A-
+            {num: 333, percent: 12}, // B
+            {num: 222, percent: 10}, // C
+            {num: 111, percent: 5} // D
+          ]
+        },
+        industryColumns: [
+          {title: '排名', type: 'index', width: '70px', align: 'center'},
+          {title: '企业名称', slot: 'name', width: '400px', tooltip: true},
+          {title: '信用分', key: 'score', align: 'center'},
+          {title: '信用等级', slot: 'level', align: 'center'}
+        ],
+        industryTop: [],
+        compDetail: {
+          keyTable: {},
+          plusData: [],
+          minusData: []
+        },
+        infoTab: 0,// 详情的正负面信息
+        showIndustryModal: false,
+        compDetailModal: false,
+        lingYuColumns: [
+          {title: '应用领域', key: 'name', maxWidth: 300},
+          {title: '受限次数', key: 'count', align: 'center'}
+        ],
+        lingYuData: lingYuData,
+        lingYuModal: false,
+        radar1Modal: false,
+        radar2Modal: false,
+
+        // 新增报送总量模态框
+        baoSongModal1:false,
+        baoSongModal2:false,
+        //新增打印次数模态框
+        bar2Modal:false
+      }
+    },
+    created: function () {
+      this.getTopIndustry()
+    },
+    mounted: function () {
+      // 渲染图表用
+      this.renderRing()
+      this.renderZrrChart()
+      this.renderQyChart()
+      this.renderZrrReportChart('zrrReportChart')
+      this.renderFrReportChart('frReportChart')
+      this.renderReport5Chart()
+    },
+    computed: {
+      allCityPeople: function () {
+        var arr = this.peopleTotal.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      },
+      allData: function () {
+        var arr = this.dataTotal.toString().split('')
+        if (arr && arr.length > 0) {
+          return arr.map(function (item) {
+            return '<span>' + item + '</span>'
+          }).join('')
+        }
+        return ''
+      },
+      deptSubFormat: function () {
+        if (this.deptSubData.length === 0) {
+          return []
+        }
+        var max = this.deptSubData[0].num
+        return this.deptSubData.map(function (item) {
+          return {
+            name: item.dept,
+            value: item.num,
+            percent: item.num / max * 100,
+            label: item.num
+          }
+        })
+      },
+      streetSubFormat: function () {
+        if (this.streetSubData.length === 0) {
+          return []
+        }
+        var max = this.streetSubData[0].num
+        return this.streetSubData.map(function (item) {
+          return {
+            name: item.dept,
+            value: item.num,
+            percent: item.num / max * 100,
+            label: item.num
+          }
+        })
+      },
+      industryTop5: function () {
+        return this.industryTop.slice(0, 5)
+      },
+      lingYuDataTop7: function () {
+        return this.lingYuData.slice(0, 7)
+      }
+    },
+    methods: {
+      zoomRadar1: function () {
+        this.radar1Modal = true;
+        this.$nextTick(function () {
+          vm.renderZrrReportChart('RCL1',20,18)
+        })
+      },
+      zoomRadar2: function () {
+        this.radar2Modal = true;
+        this.$nextTick(function () {
+          vm.renderZrrReportChart('RCL2',20,18)
+        })
+      },
+      //打印次数柱图放大
+      zoomBar2: function () {
+        this.bar2Modal = true;
+        this.$nextTick(function () {
+          vm.renderReport5Chart('report5ChartL',barWidth=30)
+        })
+      },
+      // 获取企业top100
+      getTopIndustry: function () {
+        var _self = this
+        axios.get('/getTopIndustryMock').then(function (res) {
+          _self.industryTop = res.data.list
+        })
+      },
+      // 根据企业名称查询详情
+      showDetail: function (item) {
+        this.showIndustryModal = false
+        var _self = this
+        // 需要根据item拼接查询参数
+        axios.get('/compDetail', {id: item.id}).then(function (response) {
+          _self.compDetail = response.data
+          _self.infoTab = 0 // 默认显示正面信息
+          _self.compDetailModal = true// 打开模态框3
+        })
+      },
+      renderRing: function () {
+        var myChart = echarts.init(document.getElementById('ringChart'))
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#0f36ac', '#0b87ed', '#ff9600'],
+          legend: false,
+          tooltip: false,
+          grid: {
+            top: 0,
+            bottom: 0
+          },
+          series: {
+            type: 'pie',
+            center: ['50%', '50%'],
+            radius: [20, 65],
+            hoverAnimation: false,
+            label: {
+              position: 'inside',
+              formatter: '{d}'
+            },
+            data: [54800, 22486, 22422]
+          }
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      // 渲染自然人信用分析图表
+      renderZrrChart: function () {
+        var myChart = echarts.init(document.getElementById('zrrChart'))
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#0d5ead', '#330494'],
+          legend: false,
+          tooltip: false,
+          grid: {
+            top: 40,
+            bottom: 40
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: false
+            }
+          },
+          series: {
+            type: 'line',
+            smooth: false,
+            areaStyle: {opacity: 0.8},
+            label: {
+              show: true,
+              color: '#fff'
+            },
+            data: [1393, 3233, 2988, 1878, 3479, 4421]
+          }
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      // 渲染企业信用指数图表
+      renderQyChart: function () {
+        var myChart = echarts.init(document.getElementById('qyChart'))
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#330494', '#0d5ead'],
+          legend: false,
+          tooltip: false,
+          grid: {
+            top: 40,
+            bottom: 40
+          },
+          xAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: {
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: false
+            }
+          },
+          series: {
+            type: 'line',
+            smooth: false,
+            areaStyle: {opacity: 0.8},
+            label: {
+              show: true,
+              color: '#fff'
+            },
+            data: [1393, 3233, 2988, 1878, 3479, 4421]
+          }
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      // 自然人信用报告查询用途图表
+      renderZrrReportChart: function (id,fsz=14,fsz1=14) {
+        var myChart = echarts.init(document.getElementById(id))
+        // 指定图表的配置项和数据
+        var option = {
+          legend: false,
+          color: ['#d20f60', '#0b87ed'],//数据蛛网线条的颜色，示例中为红黄绿
+          radar: [
+            {//每个网格的指数名称，类似于X轴或Y轴上的数据的值大小
+              indicator: [
+                {name: '信用激励', max: 5000},
+                {name: '评优选优', max: 5000},
+                {name: '项目申报', max: 5000},
+                {name: '商业贷款', max: 5000},
+                {name: '扶持贷款', max: 5000},
+                {name: '资金发放', max: 5000},
+                {name: '资格审查', max: 5000},
+                {name: '其他', max: 5000}
+              ],
+              radius: '80%',//统计图大小
+              splitNumber: 4,//统计图蛛网的网格分段，示例分为三段
+              name: {
+                formatter: '{value}',//蛛网轴尖的数据名称
+                textStyle: {//蛛网轴尖的文字样式
+                  fontSize: fsz, //外圈标签字体大小
+                  color: '#fff' //外圈标签字体颜色
+                }
+              },
+              splitArea: { // 蛛网在 grid 区域中的分隔区域，默认不显示。
+                show: true,
+                areaStyle: { // 分隔区域的样式设置。
+                  color: ['rgba(76, 140, 200, 0.05)', 'rgba(76, 140, 200, 0.1)'], // 分隔区域颜色。分隔区域会按数组中颜色的顺序依次循环设置颜色。默认是一个深浅的间隔色。
+                }
+              },
+              axisLine: { //蛛网轴线上的颜色，由内向外发散的那条
+                lineStyle: {
+                  color: '#153269'
+                }
+              },
+              splitLine: {//蛛网环形的线条颜色
+                lineStyle: {
+                  color: '#113865', // 分隔线颜色
+                  width: 1, // 分隔线线宽
+                }
+              }
+            }
+          ],
+          series: [{
+            type: 'radar',//统计图专业名称为雷达图，这里叫做蛛网图
+            data: [
+              {
+                name: '2014',//数据名称
+                value: [4212, 4213, 3222, 3233, 3122, 3331, 4133, 3234],
+                symbolSize: 1, // 单个数据标记的大小，可以设置成诸如 10 这样单一的数字，也可以用数组分开表示宽和高，例如 [20, 10] 表示标记宽为20，高为10。
+                label: { // 单个拐点文本的样式设置
+                  normal: {
+                    color: '#fff'
+                  },
+                  emphasis: {
+                    show: true,
+                    fontSize:fsz1,
+                    formatter: '{c}'//显示分析的数字值
+                  }
+                },
+                areaStyle: {}
+              },
+              {
+                name: '2019',
+                value: [4300, 2234, 3342, 3233, 4221, 3331, 3323, 3233],
+                symbolSize: 1,
+                label: {
+                  normal: {
+                    color: '#fff'
+                  },
+                  emphasis: {
+                    show: true,
+                    fontSize:fsz1,
+                    formatter: '{c}'
+                  }
+                },
+                areaStyle: {}
+              }
+            ]
+          }]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      // 法人信用报告查询用途图表
+      // renderFrReportChart(fsz=100)调用方法传参可覆盖默认14字体大小
+      renderFrReportChart: function (id,fsz=14,fsz1=14) {
+        var myChart = echarts.init(document.getElementById(id))
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#d20f60', '#0b87ed'],//数据蛛网线条的颜色，示例中为红黄绿
+          radar: [
+            {//每个网格的指数名称，类似于X轴或Y轴上的数据的值大小
+              indicator: [
+                {name: '信用激励', max: 5000},
+                {name: '评优选优', max: 5000},
+                {name: '项目申报', max: 5000},
+                {name: '商业贷款', max: 5000},
+                {name: '扶持贷款', max: 5000},
+                {name: '资金发放', max: 5000},
+                {name: '资格审查', max: 5000},
+                {name: '其他', max: 5000}
+              ],
+              radius: '80%',//统计图大小
+              splitNumber: 4,//统计图蛛网的网格分段，示例分为三段
+              name: {
+                formatter: '{value}',//蛛网轴尖的数据名称
+                textStyle: {//蛛网轴尖的文字样式
+                  fontSize: fsz, //外圈标签字体大小
+                  color: '#fff' //外圈标签字体颜色
+                }
+              },
+              splitArea: { // 蛛网在 grid 区域中的分隔区域，默认不显示。
+                show: true,
+                areaStyle: { // 分隔区域的样式设置。
+                  color: ['rgba(76, 140, 200, 0.05)', 'rgba(76, 140, 200, 0.1)'], // 分隔区域颜色。分隔区域会按数组中颜色的顺序依次循环设置颜色。默认是一个深浅的间隔色。
+                }
+              },
+              axisLine: { //蛛网轴线上的颜色，由内向外发散的那条
+                lineStyle: {
+                  color: '#153269'
+                }
+              },
+              splitLine: {//蛛网环形的线条颜色
+                lineStyle: {
+                  color: '#113865', // 分隔线颜色
+                  width: 1, // 分隔线线宽
+                }
+              }
+            }
+          ],
+          series: [{
+            type: 'radar',//统计图专业名称为雷达图，这里叫做蛛网图
+            data: [
+              {
+                name: '2014',//数据名称
+                value: [4212, 4213, 3222, 3233, 3122, 3331, 4133, 3234],
+                symbolSize: 1, // 单个数据标记的大小，可以设置成诸如 10 这样单一的数字，也可以用数组分开表示宽和高，例如 [20, 10] 表示标记宽为20，高为10。
+                label: { // 单个拐点文本的样式设置
+                  normal: {
+                    color: '#fff'
+                  },
+                  emphasis: {
+                    fontSize:fsz1,
+                    show: true,
+                    formatter: '{c}'//显示分析的数字值
+                  }
+                },
+                areaStyle: {}
+              },
+              {
+                name: '2019',
+                value: [4300, 2234, 3342, 3233, 4221, 3331, 3323, 3233],
+                symbolSize: 1,
+                label: {
+                  normal: {
+                    color: '#fff'
+                  },
+                  emphasis: {
+                    fontSize:fsz1,
+                    show: true,
+                    formatter: '{c}'
+                  }
+                },
+                areaStyle: {}
+              }
+            ]
+          }]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      },
+      // 信用查询和报告使用趋势分析
+      renderReport5Chart: function (id='report5Chart',barWidth=14) {
+        var myChart = echarts.init(document.getElementById(id))
+        // 指定图表的配置项和数据
+        var option = {
+          color: ['#0b87ed', '#ffcc00'],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            }
+          },
+          //柱状条间距调整
+          barGap:'40%',
+          // legend: {
+          //   data: ['查询次数', '打印次数'],
+          //   icon: 'circle',
+          //   textStyle: {
+          //     color: '#7893ad'
+          //   }
+          // },
+          grid: {
+            top: 40,
+            left: 60,
+            right: 60,
+            bottom: 40
+          },
+          xAxis: {
+            type: 'category',
+            axisLine: {
+              show: true,
+              lineStyle: {color: '#8fa0cd'}
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {color: '#0f1534'}
+            },
+            data: ['2014', '2015', '2016', '2017', '2018', '2019']
+          },
+          yAxis: [
+            {
+              type: 'value',
+              name: '查询次数',
+              splitNumber: 10,
+              nameTextStyle: {
+                fontWeight: 'bolder',
+                color: '#0b87ed',
+                fontSize: 16
+              },
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {color: '#8fa0cd'}
+              },
+              splitLine: {
+                show: true,
+                lineStyle: {color: '#0f1534'}
+              }
+            },
+            {
+              type: 'value',
+              name: '打印次数',
+              nameTextStyle: {
+                color: '#ffcc00',
+                fontWeight: 'bolder',
+                fontSize: 16
+              },
+              min: 0,
+              max: 2500,
+              splitNumber: 10,
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {color: '#8fa0cd'}
+              },
+              splitLine: {
+                show: false
+              }
+            }
+          ],
+          series: [
+            {
+              name: '查询次数',
+              type: 'bar',
+              barGap: '14%',
+              data: [3000, 3223, 3800, 4422, 5234, 7564],
+              barMaxWidth: barWidth,
+              itemStyle: {
+                barBorderRadius: [3, 3, 0, 0]
+              },
+              label: {
+                show: true,
+                position: 'top',
+                color: '#fff'
+              }
+            },
+            {
+              name: '打印次数',
+              type: 'bar',
+              data: [300, 456, 756, 1000, 1567, 2223],
+              barMaxWidth: barWidth,
+              yAxisIndex: 1,
+              itemStyle: {
+                barBorderRadius: [3, 3, 0, 0]
+              },
+              label: {
+                show: true,
+                position: 'top',
+                color: '#fff'
+              }
+            }
+          ]
+        }
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option)
+      }
+    }
+  })
+</script>
+</body>
+</html>

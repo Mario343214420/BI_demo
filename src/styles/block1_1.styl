@@ -1,0 +1,222 @@
+
+#app
+  .screen-wrapper
+    .main
+      .block2 {
+        height: 850px;
+
+        .table1 {
+          position: relative;
+          width: 100%;
+          height: 100%;
+
+          > h2 {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            line-height: 50px;
+            background: url("../images/title-bg.png") center bottom no-repeat;
+            -webkit-background-size: 100% 100%
+            background-size: 100% 50%
+          }
+
+          .per-count {
+            padding-left 30px
+
+            .pc-item {
+              display block
+              padding-top: 10px
+              padding-bottom: 10px
+
+              .inner {
+                display inline-block
+
+                .inner-img {
+                  height: 40px
+                  width: 40px
+                  margin 0 5px
+                }
+
+                .pci-num {
+                  display block
+                }
+
+                .pci-title {
+                  display block
+                }
+              }
+            }
+          }
+        }
+
+        .table2 {
+          > h2 {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            line-height: 50px;
+            -webkit-background-size: 100% 100%
+            background-size: 100% 50%
+          }
+
+          .per-count {
+            .pc-item {
+              display block
+              padding-left: 50px
+              padding-top: 10px
+              padding-bottom: 10px
+
+              .pci-num {
+                display block
+              }
+
+              .pci-title {
+                display block
+              }
+            }
+          }
+        }
+      }
+
+
+
+.special1 {
+  .bin-table-wrapper{
+    .bin-table-header {
+      .bin-table-column-center {
+        background-color: #0f1432
+        height 65px
+      }
+    }
+
+  }
+}
+.special2 {
+  .bin-table-wrapper{
+    .bin-table-header {
+      .bin-table-column-center {
+        background-color: #0f1432
+        height 60px
+      }
+    }
+
+  }
+}
+.t-style3 {
+  .bin-table-header {
+    .bin-table-column-center {
+      background-color: #0f1432
+      height 60px
+    }
+  }
+
+  .bin-table-row {
+    .bin-table-column-center {
+      background-color: #192648
+      height 60px
+
+      &:first-child {
+        background-color: #0f1432
+      }
+    }
+  }
+}
+
+//查看数量占比按钮
+.cp-btn {
+  position absolute
+  right 30px
+  top 5px
+  cursor pointer
+  padding 10px 20px
+  background-color: #0f1432
+  color #1293f9
+  font-weight: 700
+  -webkit-border-radius: 24px
+  -moz-border-radius: 24px
+  border-radius: 24px
+  font-size:16px
+
+  &:nth-child(2) {
+    right 125px
+  }
+
+  &:nth-child(3) {
+    right 234px
+  }
+}
+
+.stat-img {
+  height 15px
+  margin-right 5px
+  vertical-align text-top
+}
+
+#lineChart2 {
+  width: 400px;
+  height: 330px;
+  float: right;
+  margin-top: 60px
+}
+
+#lineChart3 {
+  width: 400px;
+  height: 320px;
+  float: right;
+  margin-top: 60px
+}
+.add{
+  position absolute
+  bottom -2px
+  line-height:26px
+  text-indent .5em
+}
+
+//覆盖bin-ui样式 调亮表格内文字颜色
+.t-style2 .s-table .bin-table-header .bin-table-column-center{
+  color #fff
+}
+
+
+.bin-table table{
+  font-size:16px
+}
+.table3 .bin-table table{
+  font-size: 16px
+  line-height:1
+}
+#app .screen-wrapper .main .block1-2 .table3 span{
+  font-size:16px
+}
+#app .screen-wrapper .main .block1-2 .table3 span:nth-child(4){
+  line-height:1.5
+}
+.t-tip-toggle{
+  position absolute
+  right -30px
+  top 5px
+  cursor pointer
+  padding 10px 20px
+  background-color: #0f1432
+  color #1293f9
+  font-weight: 700
+  -webkit-border-radius: 24px
+  -moz-border-radius: 24px
+  border-radius: 24px
+  font-size:16px
+  z-index 20
+}
+
+
+.chart-container .innerTips .t-tip2 .tt-inner{
+  font-size:18px
+  background-color: transparent
+}
+.chart-container .innerTips .left1{
+  overflow visible
+}
+.chart-container .innerTips .left2{
+  overflow visible
+}

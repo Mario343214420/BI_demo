@@ -1,0 +1,129 @@
+$blue = #00AEFF //主题蓝色
+$black = #02061a
+$bd = #181e3c //边框色
+$bgHighLight = #0e35ab
+[id^="ringChart"]
+  width: 440px;
+  height:400px;
+
+[flex~="main:justify-a"]
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-around
+#app
+  .screen-wrapper
+    user-select: none;
+    width: 3840px;
+    height: 1080px;
+    background: #02061a;
+
+    .main
+      position: relative;
+      height: calc(100% - 96px);
+      padding: 20px 40px;
+      .block-new
+        .block-inner
+          width: 450px
+          .top
+            .bin-table-wrapper
+              border-top:none
+            .block-title
+              position: relative;
+              font-size: 20px;
+              font-weight: bold;
+              text-align: center;
+              color: #fff;
+              background: url(../images/title-bg.png) center bottom no-repeat;
+              -webkit-background-size: 100% 50%
+              background-size: 100% 50%
+              width 100%
+              line-height: 60px
+              height: 60px
+              .select-tip
+                position absolute
+                right 0
+                top: 10px
+                -webkit-border-radius: 20px
+                -moz-border-radius: 20px
+                border-radius: 20px
+                background-color: #0d1335
+                color #2967b8
+                height: 40px
+                padding 0 20px
+                line-height: 40px
+                cursor pointer
+                font-size:18px
+            .num-bar
+              width: calc(100% - 2px)
+              border: 1px solid $bd
+              padding 5px
+              font-size: 18px
+              padding-left: 50px
+              color $blue
+              background-color: #0f1432
+              .number
+                > span
+                  display inline-block
+                  color $blue
+                  font-weight: 700
+                  background-color: #232e4c
+                  margin 0 2px
+                  padding 0 8px
+                  font-size: 28px
+
+
+
+          .bot
+            .chartTitle
+              text-align center
+              font-weight: 700
+              color #ffffff
+              font-size:22px
+              transform translateY(50px)
+          .map-title
+            color #2e4377
+            background-color: #0a1631
+            width 220px
+            margin 0 auto
+            height: 40px
+            font-size: 20px
+            text-align center
+            line-height: 40px
+          &:nth-child(2)
+            .over-hidden
+              height: 770px
+
+              overflow hidden
+.dipan
+  background: url(../images/foot.png) center bottom no-repeat;
+  -webkit-background-size: 100% 40px
+  background-size: 100% 80px
+.msg-bar
+  padding 20px 0
+  width: 100%
+  border: 1px solid $bd
+  .bar-inner
+    img
+      width: 50px
+      height: 50px
+      margin-right 10px
+    span
+      color #ffffff
+      font-weight: 700
+      font-size: 20px
+      p:nth-child(2)
+        font-size: 14px
+
+
+
+.block-title
+  posiion: relative;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  padding: 15px;
+  background: url(../images/title-bg.png) center bottom no-repeat;
+  -webkit-background-size: 100% 50%
+  background-size: 100% 50%
+  span
+    font-size: 20px;
